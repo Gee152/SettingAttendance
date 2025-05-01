@@ -1,0 +1,117 @@
+class CampaignStatusAssociation {
+  public campaignID: number
+  public userName: string
+  public messages: string
+  public scheduledAt: Date
+  public status: string
+  public userID: number
+  public createdAt: Date
+  public updatedAt: Date
+
+  constructor(campaignID: number, userName: string, messages: string,
+    scheduledAt: Date, status: string, userID: number, createdAt: Date, updatedAt: Date) {
+    this.campaignID = campaignID
+    this.userName = userName
+    this.messages = messages
+    this.scheduledAt = scheduledAt
+    this.status = status
+    this.userID = userID
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
+  }
+}
+
+class ContactAssociation {
+  public id: number
+  public phoneNumber: string
+  public name: string
+  public tags: string[] | null
+  public userID: string
+  public createdAt: Date
+  public updatedAt: Date
+
+  constructor(
+    id: number,
+    phoneNumber: string,
+    name: string,
+    tags: string[] | null,
+    userID: string,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this.id = id
+    this.phoneNumber = phoneNumber
+    this.name = name
+    this.tags = tags
+    this.userID = userID
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
+  }
+}
+
+class MessageAssociation {
+  public id: string
+  public content: string
+  public status: string
+  public userID: string
+  public campaignID: number
+  public contactID: number
+  public sentAt: Date
+
+  constructor(
+    id: string,
+    content: string,
+    status: string,
+    userID: string,
+    campaignID: number,
+    contactID: number,
+    sentAt: Date
+  ) {
+    this.id = id
+    this.content = content
+    this.status = status
+    this.userID = userID
+    this.campaignID = campaignID
+    this.contactID = contactID
+    this.sentAt = sentAt
+  }
+}
+
+class UserAssociation {
+  public userID: string
+  public name: string
+  public email: string
+  public passwordHash: string
+  public createdAt: Date
+  public updatedAt: Date
+
+  constructor(
+    userID: string,
+    name: string,
+    email: string,
+    passwordHash: string,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this.userID = userID
+    this.name = name
+    this.email = email
+    this.passwordHash = passwordHash
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
+  }
+}
+
+class GetLoginUserAssociation {
+  public email: string
+  public passwordHash: string
+
+  constructor(email: string, passwordHash: string) {
+    this.email = email,
+    this.passwordHash = passwordHash
+  }
+}
+
+export {
+  CampaignStatusAssociation, ContactAssociation, MessageAssociation, UserAssociation, GetLoginUserAssociation
+}
