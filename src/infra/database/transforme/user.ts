@@ -1,5 +1,5 @@
 import { UserAssociation } from "../../../domain/association/association"
-import { UserEntity } from "../../../entity/user.entity"
+import { UserEntity } from "../entity/user.entity"
 
 function toUserEntity(m: UserEntity): UserAssociation {
   return new UserAssociation(

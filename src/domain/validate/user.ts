@@ -1,5 +1,5 @@
 import { CreateUserUseCaseRequest, DeleteUserUseCaseRequest, GetLoginUserUseCaseRequest, StartSessionUserWthatsAppRequest } from "../ucio/user"
-import { checkBooleanEmpty, checkEmpty } from "./common"
+import { checkEmpty } from "./common"
 
 class CreateUserValidate  {
   async createUserValidate(req: CreateUserUseCaseRequest): Promise<string> {
@@ -53,7 +53,7 @@ class DeleteUserValidate {
         if (checkEmpty(req.userID)) {
             return 'O ID não pode ficar vazio.'
         }
-        return ""
+        return null
     }
 }
 

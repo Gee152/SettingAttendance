@@ -60,11 +60,9 @@ class UpdateUserUseCaseRequest {
 }
 
 class UpdateUserUseCaseResponse {
-  public user: UserAssociation | null
   public error: ErrorEntity | null
 
-  constructor(user: UserAssociation | null, error: ErrorEntity | null) {
-    this.user = user,
+  constructor(error: ErrorEntity | null) {
     this.error = error
   }
 }

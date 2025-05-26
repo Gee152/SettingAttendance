@@ -18,7 +18,7 @@ import path from 'path';
 import { MulterFileType, ContactType, UserType, qrCodeType, VenomClient  } from './types';  // Importando interfaces
 import 'reflect-metadata';
 import { AppDataSource } from './data-source';
-import { UserEntity } from './entity/user.entity';
+import { UserEntity } from './infra/database/entity/user.entity';
 
 AppDataSource.initialize()
   .then(() => {

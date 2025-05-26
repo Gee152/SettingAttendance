@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm'
-import { UserEntity } from './entity/user.entity'
-import { Contact } from './entity/contact.entity'
-import { Campaign } from './entity/campaign.entity'
-import { Message } from './entity/message.entity'
+import { UserEntity } from './infra/database/entity/user.entity'
+import { ContactEntity } from './infra/database/entity/contact.entity'
+import { CampaignEntity } from './infra/database/entity/campaign.entity'
+import { MessageEntity } from './infra/database/entity/message.entity'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,11 +11,11 @@ export const AppDataSource = new DataSource({
   username: 'postgres',
   password: 'postgres',
   database: 'messaging_app',
-  entities: [UserEntity, Contact, Message, Campaign],
+  entities: [UserEntity, ContactEntity, MessageEntity, CampaignEntity],
   migrations: ['src/migration/*.ts'],
   synchronize: true, // Apenas para desenvolvimento!
-  logging: true,
-});
+  logging: false,
+})
 
 async function initializeDataSource() {
   try {

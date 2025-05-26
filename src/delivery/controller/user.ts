@@ -1,11 +1,11 @@
-import { CreateUserRepository, DeleteUserRepository, GetLoginUserRepository, StartSessionWhatsAppRepository, UpdateUserRepository } from "../../domain/repository/interface"
+import { CreateUserRepository, DeleteUserRepository, GetLoginUserRepository, StartSessionWhatsAppRepository, UpdateUserRepository } from "../../domain/repository/user"
 import { CreateUserUseCaseRequest, CreateUserUseCaseResponse, DeleteUserUseCaseRequest, DeleteUserUseCaseResponse, GetLoginUserUseCaseRequest, GetLoginUserUseCaseResponse, 
 StartSessionUserWthatsAppRequest, StartSessionUserWthatsAppResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse } from "../../domain/ucio/user"
 import { CreateUserValidate, DeleteUserValidate, GetLoginUserValidate, StartSessionWhatsAppValidate, UpdateUserValidate } from "../../domain/validate/user"
 import { SuccessResponse } from "../response/response"
 import { Request, Response } from 'express'
 import { InternalServerError, PreconditionError, TAG_INTERNAL_SERVER_ERROR, TAG_PRE_CONDITION_ERROR } from "../../domain/association/error"
-import { create, CreateOptions, Whatsapp } from 'venom-bot'
+import { create, CreateOptions } from 'venom-bot'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
@@ -110,33 +110,32 @@ class UpdateUserController {
   async updateUser(req: Request, res: Response): Promise<void> {
     const {userID, name, email, password} = req.body
     const ucReq = new UpdateUserUseCaseRequest(userID, name, email, password)
-    console.log("UpdateUserController", ucReq)
+
     const validate = new UpdateUserValidate()
     const repository = new UpdateUserRepository()
 
     const usecase = async (req: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> => {
       try {
-      const error = await validate.updateUserValidate(req)
-      if (!error) {
-        let data = null
-        const updateUser = await repository.getUpdateLoginUser(req.userID)
-        console.log("updateUser", updateUser)
-        if(userID && updateUser && updateUser.userID === req.userID) {
-          const now = new Date()
-          updateUser.name = req.name,
-          updateUser.email = req.email,
-          updateUser.passwordHash,
-          updateUser.updatedAt = now
-          data = await repository.updateUser(updateUser)
+        const error = await validate.updateUserValidate(req)
+        if (!error) {
+          const updateUser = await repository.updateLoginUser(req.userID)
+          console.log("updateUser", updateUser)
+          if(updateUser?.userID === req.userID) {
+            const now = new Date()
+            updateUser.name = req.name,
+            updateUser.email = req.email,
+            updateUser.passwordHash = req.passwordHash,
+            updateUser.updatedAt = now
+            await repository.updateUser(updateUser)
+          }
+          return new UpdateUserUseCaseResponse( null )
+        } else {
+          console.log(TAG_PRE_CONDITION_ERROR, error)
+          return new UpdateUserUseCaseResponse(new PreconditionError(error))
         }
-        return new UpdateUserUseCaseResponse( data, null )
-      } else {
-        console.log(TAG_PRE_CONDITION_ERROR, error)
-        return new UpdateUserUseCaseResponse(null, new PreconditionError(error))
-      }
       }catch(error: any) {
         console.log(TAG_INTERNAL_SERVER_ERROR, error)
-        return new UpdateUserUseCaseResponse(null, new InternalServerError(error.message))
+        return new UpdateUserUseCaseResponse(new InternalServerError(error.message))
       }
     }
 
@@ -145,11 +144,11 @@ class UpdateUserController {
       if (ucRes.error) {
         res.status(400).json({ error: ucRes.error })
       } else {
-        new SuccessResponse().success(res, ucRes.user)
+        new SuccessResponse().success(res, ucRes)
       }
     }catch (error: any) {
       console.log(TAG_INTERNAL_SERVER_ERROR, error)
-      new UpdateUserUseCaseResponse(null, new InternalServerError(error.message))
+      new UpdateUserUseCaseResponse(new InternalServerError(error.message))
     }
   }
 }
@@ -170,7 +169,7 @@ class DeleteUserController {
             await repository.deleteUserRepository(req.userID)
             console.log("deleteUser", req.userID)
             return new DeleteUserUseCaseResponse(null)
-          }else {
+          } else {
             console.log(TAG_PRE_CONDITION_ERROR, error)
             return new DeleteUserUseCaseResponse(new PreconditionError(error || "Unknown error"))
           }
@@ -251,4 +250,7 @@ class StartSessionUserWhatsAppController {
 }
 
 
-export {CreateUserRegisterController, LoginUserController, StartSessionUserWhatsAppController, UpdateUserController, DeleteUserController}
+export {
+  CreateUserRegisterController, LoginUserController, StartSessionUserWhatsAppController, 
+  UpdateUserController, DeleteUserController
+}

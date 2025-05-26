@@ -50,35 +50,28 @@ class ContactAssociation {
 }
 
 class MessageAssociation {
-  public id: string
+  public messageID: string | null
   public content: string
   public status: string
-  public userID: string
-  public campaignID: number
-  public contactID: number
-  public sentAt: Date
-
+  public createdAt: Date
+  public updatedAt: Date
   constructor(
-    id: string,
+    messageID: string | null,
     content: string,
     status: string,
-    userID: string,
-    campaignID: number,
-    contactID: number,
-    sentAt: Date
+    createdAt: Date,
+    updatedAt: Date
   ) {
-    this.id = id
+    this.messageID = messageID
     this.content = content
     this.status = status
-    this.userID = userID
-    this.campaignID = campaignID
-    this.contactID = contactID
-    this.sentAt = sentAt
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
   }
 }
 
 class UserAssociation {
-  public userID: string
+  public userID: string | null
   public name: string
   public email: string
   public passwordHash: string
@@ -86,7 +79,7 @@ class UserAssociation {
   public updatedAt: Date
 
   constructor(
-    userID: string,
+    userID: string | null,
     name: string,
     email: string,
     passwordHash: string,

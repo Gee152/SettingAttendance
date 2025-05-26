@@ -1,11 +1,11 @@
 import { AppDataSource } from "../../data-source"
 import { UserAssociation } from "../../domain/association/association"
 import { toUserEntity, toUserModel } from "./transforme/user"
-import { UserEntity } from "../../entity/user.entity"
+import { UserEntity } from "./entity/user.entity"
 
 async function createUser(User: UserAssociation): Promise<UserAssociation> {
   const userTransformed = toUserModel(User)
-  const repository = AppDataSource.getRepository(UserEntity);
+  const repository = AppDataSource.getRepository(UserEntity)
   const userTransformeDB = await repository.save(userTransformed)
 
   return toUserEntity(userTransformeDB)
@@ -18,7 +18,7 @@ async function getLoginUser(email: string): Promise<UserAssociation | null> {
   return userFromDb ? toUserEntity(userFromDb) : null
 }
 
-async function getUpdateLoginUser(userID: string): Promise<UserAssociation | null> {
+async function updateLoginUser(userID: string): Promise<UserAssociation | null> {
   const repository = AppDataSource.getRepository(UserEntity)
   const userFromDb = await repository.findOneBy({ userID })
 
@@ -31,7 +31,7 @@ async function updateUser(User: UserAssociation): Promise<UserAssociation> {
   const { userID } = updateUserModel
   
   await updateUserTransformed.update(userID as string, updateUserModel)
-  const result = await updateUserTransformed.findOneBy({ userID })
+  const result = await updateUserTransformed.findOneBy({ userID: userID as string })
 
   return toUserEntity(result as UserEntity)
 }
@@ -39,7 +39,7 @@ async function updateUser(User: UserAssociation): Promise<UserAssociation> {
 async function deleteUser(userID: string): Promise<UserAssociation> {
   const repository = AppDataSource.getRepository(UserEntity)
   const userFromDb = await repository.findOneBy({ userID })
-  console.log("userFromDb", userFromDb)
+
   const userTransformeDB = toUserModel(userFromDb as UserAssociation)
   await repository.delete(userTransformeDB.userID as string)
 
@@ -54,5 +54,6 @@ async function getUserWhastsAppSession(userID: string): Promise<UserAssociation 
 }
 
 export {
-  createUser, getLoginUser, updateUser , getUpdateLoginUser, deleteUser, getUserWhastsAppSession
+  createUser, getLoginUser, updateUser , updateLoginUser, 
+  deleteUser, getUserWhastsAppSession
 }
