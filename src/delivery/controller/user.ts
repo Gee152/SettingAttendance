@@ -72,7 +72,7 @@ class LoginUserController {
     const usecase = async (req: GetLoginUserUseCaseRequest): Promise<GetLoginUserUseCaseResponse> => {
         try {
           const error = await validate.getLoginUserValidate(req)
-          if (error) {
+          if (error) { //ajustar essa logica baseada no useCase do contact, caso não lembre
             return new GetLoginUserUseCaseResponse(null, null, new PreconditionError(error))
           }
 
@@ -157,25 +157,22 @@ class DeleteUserController {
   async deleteUser(req: Request, res: Response): Promise<void> {
       const { userID } = req.body
       const ucReq = new DeleteUserUseCaseRequest(userID)
-      console.log("DeleteUserController", userID)
       const validate = new DeleteUserValidate()
       const repository = new DeleteUserRepository()
 
       const usecase = async (req: DeleteUserUseCaseRequest): Promise<DeleteUserUseCaseResponse> => {
         try{
           const error = await validate.deleteUser(req)
-          console.log("error", req.userID)
           if (!error) {
             await repository.deleteUserRepository(req.userID)
-            console.log("deleteUser", req.userID)
             return new DeleteUserUseCaseResponse(null)
           } else {
             console.log(TAG_PRE_CONDITION_ERROR, error)
-            return new DeleteUserUseCaseResponse(new PreconditionError(error || "Unknown error"))
+            return new DeleteUserUseCaseResponse(new PreconditionError(error))
           }
         }catch(error: any) {
           console.log(TAG_INTERNAL_SERVER_ERROR, error)
-          return new DeleteUserUseCaseResponse(new InternalServerError(error.message))
+          return new DeleteUserUseCaseResponse(new InternalServerError(error))
         }
       }
 
@@ -188,7 +185,7 @@ class DeleteUserController {
         }
       }catch (error: any) {
         console.log(TAG_INTERNAL_SERVER_ERROR, error)
-        new DeleteUserUseCaseResponse(new InternalServerError(error.message))
+        new DeleteUserUseCaseResponse(new InternalServerError(error))
       }
   }
 }

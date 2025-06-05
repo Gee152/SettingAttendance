@@ -1,34 +1,35 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
-@Entity()
+@Entity({ name: 'contact', schema: 'public'}) 
 export class ContactEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ type: 'uuid', name: 'contact_id' })
     public contactID!: string
 
-  @Column()
+  @Column({ type: 'varchar', name: 'user_id' })
+    public userID!: string
+
+  @Column({ type: 'varchar', name: 'phone_number', length: 15 })
     public phoneNumber!: string
 
-  @Column()
+  @Column({ type: 'varchar', name: 'name', length: 120 })
     public name!: string
 
-  @Column('jsonb', { nullable: true })
-    public tags!: string[]
+  @Column({ type: 'varchar', name: 'tags', nullable: true, length: 120 }) 
+    public tags!: string[] | null
 
-  constructor(contactID: string, phoneNumber: string, name: string, tags: string[]) {
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: false })
+    createdAt!: Date
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: false })
+    updatedAt!: Date
+
+    constructor(contactID: string, userID: string, phoneNumber: string, name: string, tags: string[] | null, createdAt: Date, updatedAt: Date) {
     this.contactID = contactID
+    this.userID = userID
     this.phoneNumber = phoneNumber
     this.name = name
     this.tags = tags
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
   }
-
-  @ManyToOne(() => UserEntity, (user) => user.contacts, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-    user!: UserEntity
-
-  @CreateDateColumn()
-    createdAt!: Date
-
-  @UpdateDateColumn()
-    updatedAt!: Date
 } 

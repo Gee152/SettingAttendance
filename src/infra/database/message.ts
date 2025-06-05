@@ -32,12 +32,12 @@ async function updateMessage(message: MessageAssociation): Promise<MessageAssoci
 
 async function deleteMessage(messageID: string): Promise<MessageAssociation> {
   const repository = AppDataSource.getRepository(MessageEntity)
-  const MessegeFromDb = await repository.findOneBy({ messageID })
+  const messegeFromDb = await repository.findOneBy({ messageID })
 
-  const MessegeTransformeDB = toMessageModel(MessegeFromDb as MessageAssociation)
-  await repository.delete(MessegeTransformeDB.messageID as string)
+  const messegeTransformeDB = toMessageModel(messegeFromDb as MessageAssociation)
+  await repository.delete(messegeTransformeDB.messageID as string)
 
-  return toMessageEntity(MessegeFromDb as MessageEntity)
+  return toMessageEntity(messegeFromDb as MessageEntity)
 }
 
 

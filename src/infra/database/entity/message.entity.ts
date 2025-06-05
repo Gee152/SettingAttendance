@@ -1,7 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
-import { CampaignEntity } from './campaign.entity'
-import { UserEntity } from './user.entity'
-import { ContactEntity } from './contact.entity'
 
 export enum MessageStatus {
   CREATED = 'created',
@@ -20,19 +17,6 @@ export class MessageEntity {
 
   @Column({ type: 'enum', enum: MessageStatus, default: MessageStatus.CREATED })
     public status!: MessageStatus
-
-
-  @ManyToOne(() => UserEntity, (user) => user.messages, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-    user!: UserEntity
-
-  @ManyToOne(() => CampaignEntity, (campaigns) => campaigns.messages)
-  @JoinColumn({ name: 'campaign_id' })
-    campaign!: CampaignEntity
-
-  @ManyToOne(() => ContactEntity)
-  @JoinColumn({ name: 'contact_id' })
-    contact!: ContactEntity
 
   @CreateDateColumn({ name: 'created_at' })
     public createdAt!: Date

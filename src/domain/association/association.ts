@@ -22,28 +22,28 @@ class CampaignStatusAssociation {
 }
 
 class ContactAssociation {
-  public id: number
+  public contactID: string
+  public userID: string
   public phoneNumber: string
   public name: string
   public tags: string[] | null
-  public userID: string
   public createdAt: Date
   public updatedAt: Date
 
   constructor(
-    id: number,
+    contactID: string,
+    userID: string,
     phoneNumber: string,
     name: string,
     tags: string[] | null,
-    userID: string,
     createdAt: Date,
     updatedAt: Date
   ) {
-    this.id = id
+    this.contactID = contactID
+    this.userID = userID
     this.phoneNumber = phoneNumber
     this.name = name
     this.tags = tags
-    this.userID = userID
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }

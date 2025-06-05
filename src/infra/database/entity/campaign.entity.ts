@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { UserEntity } from './user.entity'
 
 export enum CampaignStatus {
@@ -24,18 +24,19 @@ export class CampaignEntity {
   @Column({ type: 'enum', enum: CampaignStatus, default: CampaignStatus.DRAFT })
   public status!: CampaignStatus
 
-  @ManyToOne(() => UserEntity, (user) => user.campaigns, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at', nullable: true})
+   public createdAt!: Date
+  
+  @UpdateDateColumn({type: 'timestamp', name: 'updated_at', nullable: true})
+    public updatedAt!: Date
 
-  @CreateDateColumn()
-  createdAt!: Date
-
-   constructor(campaignID: string, name: string, messages: string, scheduledAt: Date, status: CampaignStatus) {
+   constructor(campaignID: string, name: string, messages: string, scheduledAt: Date, status: CampaignStatus, createdAt: Date, updatedAt: Date) {
     this.campaignID = campaignID
     this.name = name
     this.messages = messages
     this.scheduledAt = scheduledAt
     this.status = status
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
   }
 }

@@ -1,9 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm'
 import * as bcrypt from 'bcrypt'
-import { ContactEntity } from './contact.entity'
-import { CampaignEntity } from './campaign.entity'
-import { MessageEntity } from './message.entity'
-
 
 @Entity({ schema: 'public', name: 'users' })
 export class UserEntity {
@@ -24,16 +20,6 @@ export class UserEntity {
 
   @UpdateDateColumn()
     public updatedAt!: Date
-
-  // Relações
-  @OneToMany(() => ContactEntity, (contact) => contact.user)
-  contacts!: ContactEntity[]
-
-  @OneToMany(() => CampaignEntity, (campaign) => campaign.user)
-  campaigns!: CampaignEntity[]
-
-  @OneToMany(() => MessageEntity, (message) => message.user)
-  messages!: MessageEntity[]
 
   constructor(  
     userID: string | null,

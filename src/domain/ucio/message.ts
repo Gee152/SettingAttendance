@@ -1,6 +1,5 @@
 import { MessageAssociation } from "../../domain/association/association"
 import { ErrorEntity } from "../../domain/association/error"
-import { MessageStatus } from "../../infra/database/entity/message.entity"
 
 class CreateMessageUseCaseRequest {
   public content: string
@@ -26,7 +25,7 @@ class GetMessageUseCaseRequest {
   }
 }
 
-class GetMessageUseCaseResponse {
+class GetMessageUseCaseResponse { //Deixar só o response com error
   public messages: MessageAssociation | null
   public error: ErrorEntity | null
 

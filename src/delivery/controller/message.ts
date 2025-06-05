@@ -18,35 +18,35 @@ class CreateMessageController {
 
       const usecase = async (req: CreateMessageUseCaseRequest): Promise<CreateMessageUseCaseResponse> => {
           try{
-              const error = await validate.createMessageValidate(req)
+            const error = await validate.createMessageValidate(req)
 
-              if (error) {
+              if (error) { //ajustar essa logica baseada no useCase do contact, caso não lembre
                 return new CreateMessageUseCaseResponse(new PreconditionError(error))
               }
 
-               await repository.createMessage({
+                await repository.createMessage({
                   messageID: uuidv4(),
                   content: req.content,
                   status: MessageStatus.CREATED,
                   createdAt: new Date(),
                   updatedAt: new Date()
                 })
-              return new CreateMessageUseCaseResponse(null)
+                return new CreateMessageUseCaseResponse(null)
           }catch(error: any) {
-            return new CreateMessageUseCaseResponse(new PreconditionError(error.message))
+            return new CreateMessageUseCaseResponse(new PreconditionError(error))
           }
       }
 
       try {
         const ucRes = await usecase(ucReq)
-        if(ucRes.error) {
-          res.status(400).json({ error: ucRes.error })
-        }else {
-          new SuccessResponse().success(res, ucRes)
-        }
+          if(ucRes.error) {
+            res.status(400).json({ error: ucRes.error })
+          }else {
+            new SuccessResponse().success(res, ucRes)
+          }
       }catch (error: any) {
         console.log(TAG_INTERNAL_SERVER_ERROR, error)
-        new CreateMessageUseCaseResponse(new InternalServerError(error.message))
+        new CreateMessageUseCaseResponse(new InternalServerError(error))
       }
   }
 }
@@ -60,18 +60,18 @@ class GetMessageController {
     const repository = new GetMessageRepository()
 
     const usecase = async (req: GetMessageUseCaseRequest): Promise<GetMessageUseCaseResponse> => {
-      try {
-        const error = await validate.getMessageValidate(req)
+        try {
+            const error = await validate.getMessageValidate(req)
 
-        if (!error) {
+              if (!error) { //ajustar essa logica baseada no useCase do contact, caso não lembre
+                return new GetMessageUseCaseResponse(null, new PreconditionError(error))
+              }
+
+              const message = await repository.getMessage(req.messageID)
+              return new GetMessageUseCaseResponse(message, null)
+        } catch (error: any) {
           return new GetMessageUseCaseResponse(null, new PreconditionError(error))
         }
-
-        const message = await repository.getMessage(req.messageID)
-        return new GetMessageUseCaseResponse(message, null)
-      } catch (error: any) {
-        return new GetMessageUseCaseResponse(null, new PreconditionError(error.message))
-      }
     }
 
     try {
@@ -83,7 +83,7 @@ class GetMessageController {
       }
     } catch (error: any) {
       console.log(TAG_INTERNAL_SERVER_ERROR, error)
-      new CreateMessageUseCaseResponse(new InternalServerError(error.message))
+      new CreateMessageUseCaseResponse(new InternalServerError(error))
     }
   }
 }
@@ -92,38 +92,36 @@ class UpdateMessageController {
   async updateMessage(req: Request, res: Response): Promise<void> {
     const { messageID, content } = req.body
     const ucReq = new UpdateMessageUseCaseRequest(messageID, content)
-    console.log("ucReq", ucReq)
+
     const validate = new UpdateMessageValidate()
     const repository = new UpdateMessageRepository()
 
     const usecase = async (req: UpdateMessageUseCaseRequest): Promise<UpdateMessageUseCaseResponse> => {
-      try {
-        const error = await validate.updateMessageValidate(req)
+        try {
+          const error = await validate.updateMessageValidate(req)
 
-        if (!error) {
-          const updateMessage = await repository.getMessage(req.messageID)
-          console.log("updateMessage", updateMessage)
-          if(updateMessage?.messageID === req.messageID) {
-            const now = new Date()
-            updateMessage.content = req.content
-            updateMessage.status = MessageStatus.UPDATED
-            updateMessage.updatedAt = now
-            await repository.updateMessage(updateMessage)
-          }
-          return new UpdateMessageUseCaseResponse( null )
-        } else {
-          console.log(TAG_PRE_CONDITION_ERROR, error)
-          return new UpdateMessageUseCaseResponse(new PreconditionError(error))
+          if (!error) {
+            const updateMessage = await repository.getMessage(req.messageID)
+                if(updateMessage?.messageID === req.messageID) {
+                  const now = new Date()
+                  updateMessage.content = req.content
+                  updateMessage.status = MessageStatus.UPDATED
+                  updateMessage.updatedAt = now
+                  await repository.updateMessage(updateMessage)
+                }
+                return new UpdateMessageUseCaseResponse( null )
+              } else {
+                console.log(TAG_PRE_CONDITION_ERROR, error)
+                return new UpdateMessageUseCaseResponse(new PreconditionError(error))
+              }
+        }catch(error: any) {
+          console.log(TAG_INTERNAL_SERVER_ERROR, error)
+          return new UpdateMessageUseCaseResponse(new InternalServerError(error))
         }
-      }catch(error: any) {
-        console.log(TAG_INTERNAL_SERVER_ERROR, error)
-        return new UpdateMessageUseCaseResponse(new InternalServerError(error.message))
-      }
     }
 
     try {
       const ucRes = await usecase(ucReq)
-      console.log("ucRes", ucRes)
       if (ucRes.error) {
         res.status(400).json({ error: ucRes.error })
       } else {
@@ -131,7 +129,7 @@ class UpdateMessageController {
       }
     }catch (error: any) {
       console.log(TAG_INTERNAL_SERVER_ERROR, error)
-      new UpdateUserUseCaseResponse(new InternalServerError(error.message))
+      new UpdateUserUseCaseResponse(new InternalServerError(error))
     }
   }
 }
@@ -145,18 +143,18 @@ class DeleteMessageController {
     const repository = new DeleteMessageRepository()
 
     const usecase = async (req: DeleteMessageUseCaseRequest): Promise<DeleteMessageUseCaseResponse> => {
-      try {
-        const error = await validate.deleteMessage(req)
+        try {
+            const error = await validate.deleteMessage(req)
 
-        if (!error) {
-          await repository.deleteMessage(req.messageID)
-          return new DeleteMessageUseCaseResponse(null)
-        } else {
+              if (!error) {
+                await repository.deleteMessage(req.messageID)
+                return new DeleteMessageUseCaseResponse(null)
+              } else {
+                return new DeleteMessageUseCaseResponse(new PreconditionError(error))
+              }
+        } catch (error: any) {
           return new DeleteMessageUseCaseResponse(new PreconditionError(error))
         }
-      } catch (error: any) {
-        return new DeleteMessageUseCaseResponse(new PreconditionError(error.message))
-      }
     }
 
     try {
@@ -168,7 +166,7 @@ class DeleteMessageController {
       }
     } catch (error: any) {
       console.log(TAG_INTERNAL_SERVER_ERROR, error)
-      new DeleteMessageUseCaseResponse(new InternalServerError(error.message))
+      new DeleteMessageUseCaseResponse(new InternalServerError(error))
     }
   }
 }
