@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
-import { UserEntity } from './user.entity'
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn } from 'typeorm'
 
 export enum CampaignStatus {
   DRAFT = 'draft',
@@ -9,20 +8,20 @@ export enum CampaignStatus {
 
 @Entity({ schema: 'public', name: 'campaigns' })
 export class CampaignEntity {
-  @PrimaryGeneratedColumn('uuid', { name: 'campaingn_id' })
-  public campaignID!: string
+  @PrimaryColumn({ type:'uuid', name: 'campaingn_id' })
+    public campaignID!: string
 
-  @Column({ name: 'user_name', length: 100 })
-  public name!: string
+  @Column({ name: 'user_name', length: 100, nullable: true })
+    public userName!: string
 
-  @Column('text')
-  public messages!: string
+  @Column({type: 'varchar', name: 'messages', length: 500})
+    public messages!: string
 
-  @Column({ nullable: true })
-  public scheduledAt!: Date
+  @Column({type: 'timestamp', name: 'scheduled_at' ,nullable: true })
+    public scheduledAt!: Date
 
-  @Column({ type: 'enum', enum: CampaignStatus, default: CampaignStatus.DRAFT })
-  public status!: CampaignStatus
+  @Column({ type: 'enum', name: 'status' ,enum: CampaignStatus, default: CampaignStatus.DRAFT })
+    public status!: CampaignStatus
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', nullable: true})
    public createdAt!: Date
@@ -30,9 +29,9 @@ export class CampaignEntity {
   @UpdateDateColumn({type: 'timestamp', name: 'updated_at', nullable: true})
     public updatedAt!: Date
 
-   constructor(campaignID: string, name: string, messages: string, scheduledAt: Date, status: CampaignStatus, createdAt: Date, updatedAt: Date) {
+   constructor(campaignID: string, userName: string, messages: string, scheduledAt: Date, status: CampaignStatus, createdAt: Date, updatedAt: Date) {
     this.campaignID = campaignID
-    this.name = name
+    this.userName = userName
     this.messages = messages
     this.scheduledAt = scheduledAt
     this.status = status
