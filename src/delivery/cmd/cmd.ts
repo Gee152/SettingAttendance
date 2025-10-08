@@ -1,5 +1,6 @@
 import express from 'express'
 import http from 'http'
+import cors from 'cors'
 import bodyParser from 'body-parser'
 import { Router } from '../router'
 
@@ -17,6 +18,11 @@ class CmdRest {
     }
 
     private middleware() {
+      this.app.use(cors({
+      origin: 'http://localhost:3000',
+      credentials: true
+    }))
+
         this.app.use(bodyParser.json({limit: '100mb'}))
         this.app.use(bodyParser.urlencoded({ extended: false }))
     }

@@ -49,7 +49,7 @@ async function deleteUser(userID: string): Promise<UserAssociation> {
 async function getUserWhastsAppSession(userID: string): Promise<UserAssociation | null> {
   const repository = AppDataSource.getRepository(UserEntity)
   const userFromDb = await repository.findOneBy({ userID })
-  console.log("userFromDb", userFromDb)
+
   return userFromDb ? toUserEntity(userFromDb) : null
 }
 

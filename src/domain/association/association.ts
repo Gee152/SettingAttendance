@@ -1,21 +1,19 @@
-class CampaignStatusAssociation {
-  public campaignID: number
+class CampaignAssociation {
+  public campaignID: string
   public userName: string
   public messages: string
   public scheduledAt: Date
   public status: string
-  public userID: number
   public createdAt: Date
   public updatedAt: Date
 
-  constructor(campaignID: number, userName: string, messages: string,
-    scheduledAt: Date, status: string, userID: number, createdAt: Date, updatedAt: Date) {
+  constructor(campaignID: string, userName: string, messages: string,
+    scheduledAt: Date, status: string, createdAt: Date, updatedAt: Date) {
     this.campaignID = campaignID
     this.userName = userName
     this.messages = messages
     this.scheduledAt = scheduledAt
     this.status = status
-    this.userID = userID
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
@@ -106,5 +104,5 @@ class GetLoginUserAssociation {
 }
 
 export {
-  CampaignStatusAssociation, ContactAssociation, MessageAssociation, UserAssociation, GetLoginUserAssociation
+  CampaignAssociation, ContactAssociation, MessageAssociation, UserAssociation, GetLoginUserAssociation
 }

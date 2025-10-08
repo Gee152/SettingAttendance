@@ -95,21 +95,36 @@ class StartSessionUserWthatsAppRequest {
 class StartSessionUserWthatsAppResponse {
   public success: boolean
   public session: string | null
+  public userID: string
   public error: ErrorEntity | null
 
-  constructor(success: boolean, session: string | null, error: ErrorEntity | null) {
+  constructor(success: boolean, session: string | null, userID: string, error: ErrorEntity | null) {
     this.success = success
     this.session = session
+    this.userID = userID
     this.error = error
   }
 }
 
+class CheckEmailExistsUserUseCaseRequest {
+  public email: string
 
+  constructor(email: string) {
+    this.email = email
+  }
+}
 
+class CheckEmailExistsUserUseCaseResponse {
+  public error: ErrorEntity | null
+
+  constructor(error: ErrorEntity | null) {
+    this.error = error
+  }
+}
 
 export {
   CreateUserUseCaseRequest, CreateUserUseCaseResponse, GetLoginUserUseCaseRequest, 
   GetLoginUserUseCaseResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse,
   DeleteUserUseCaseRequest, DeleteUserUseCaseResponse ,StartSessionUserWthatsAppRequest,
-  StartSessionUserWthatsAppResponse
+  StartSessionUserWthatsAppResponse, CheckEmailExistsUserUseCaseRequest, CheckEmailExistsUserUseCaseResponse
 }

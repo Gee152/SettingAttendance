@@ -1,7 +1,8 @@
 import { CreateUserRepository, DeleteUserRepository, GetLoginUserRepository, StartSessionWhatsAppRepository, UpdateUserRepository } from "../../domain/repository/user"
-import { CreateUserUseCaseRequest, CreateUserUseCaseResponse, DeleteUserUseCaseRequest, DeleteUserUseCaseResponse, GetLoginUserUseCaseRequest, GetLoginUserUseCaseResponse, 
-StartSessionUserWthatsAppRequest, StartSessionUserWthatsAppResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse } from "../../domain/ucio/user"
-import { CreateUserValidate, DeleteUserValidate, GetLoginUserValidate, StartSessionWhatsAppValidate, UpdateUserValidate } from "../../domain/validate/user"
+import { CheckEmailExistsUserUseCaseRequest, CheckEmailExistsUserUseCaseResponse, CreateUserUseCaseRequest, CreateUserUseCaseResponse, 
+DeleteUserUseCaseRequest, DeleteUserUseCaseResponse, GetLoginUserUseCaseRequest, GetLoginUserUseCaseResponse, StartSessionUserWthatsAppRequest, 
+StartSessionUserWthatsAppResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse } from "../../domain/ucio/user"
+import { CheckEmailExistsUserValidate, CreateUserValidate, DeleteUserValidate, GetLoginUserValidate, StartSessionWhatsAppValidate, UpdateUserValidate } from "../../domain/validate/user"
 import { SuccessResponse } from "../response/response"
 import { Request, Response } from 'express'
 import { InternalServerError, PreconditionError, TAG_INTERNAL_SERVER_ERROR, TAG_PRE_CONDITION_ERROR } from "../../domain/association/error"
@@ -10,12 +11,14 @@ import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { WhatsApoStatusEnum } from "../../domain/utils/enum"
 
 dotenv.config()
 
 class CreateUserRegisterController {
   async createUser(req: Request, res: Response): Promise<void> {
       const {name, email, password} = req.body
+      console.log('req.body', req.body)
       const ucReq = new CreateUserUseCaseRequest(name, email, password)
 
       const validate = new CreateUserValidate()
@@ -25,21 +28,23 @@ class CreateUserRegisterController {
           try{
               const error = await validate.createUserValidate(req)
               console.log("error", error)
-              if (error) {
-                return new CreateUserUseCaseResponse(null, new PreconditionError(error))
-              }
-              const hashedPassword = await bcrypt.hash(password, 10)
-              const user = await repository.createUser(
-                {
-                  userID: uuidv4(),
-                  name: req.name,
-                  email: req.email,
-                  passwordHash: hashedPassword,
-                  createdAt: new Date(),
-                  updatedAt: new Date()
-              }
-            )
+              if (!error) {
+                const hashedPassword = await bcrypt.hash(password, 10)
+                const user = await repository.createUser(
+                  {
+                    userID: uuidv4(),
+                    name: req.name,
+                    email: req.email,
+                    passwordHash: hashedPassword,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+              )
               return new CreateUserUseCaseResponse(user, null)
+              } else {
+                console.log(TAG_PRE_CONDITION_ERROR, error)
+                return new CreateUserUseCaseResponse(null, new PreconditionError(error))
+              }    
           }catch(error: any) {
             return new CreateUserUseCaseResponse(null, new PreconditionError(error.message));
           }
@@ -72,20 +77,20 @@ class LoginUserController {
     const usecase = async (req: GetLoginUserUseCaseRequest): Promise<GetLoginUserUseCaseResponse> => {
         try {
           const error = await validate.getLoginUserValidate(req)
-          if (error) { //ajustar essa logica baseada no useCase do contact, caso não lembre
+          if (!error) {
+            const user = await repository.getLoginUser(email)
+            
+            if (!user || (await bcrypt.compare(req.passwordHash, user.passwordHash))) {
+              return new GetLoginUserUseCaseResponse(null, null, new PreconditionError("Usuário não cadastrado ou senha inválida"))
+            }
+
+            const token = jwt.sign({ userID: user.userID, name: user.name, email: user.email }, JWT_SECRET as string, { expiresIn: '7d' })
+
+            return new GetLoginUserUseCaseResponse(token, user, null)
+          } else {
+            console.log(TAG_PRE_CONDITION_ERROR, error)
             return new GetLoginUserUseCaseResponse(null, null, new PreconditionError(error))
-          }
-
-          const user = await repository.getLoginUser(email)
-          
-          if (!user || !(await bcrypt.compare(req.passwordHash, user.passwordHash))) {
-            return new GetLoginUserUseCaseResponse(null, null, new PreconditionError("Usuário não cadastrado ou senha inválida"));
-          }
-
-          const token = jwt.sign({ userID: user.userID, name: user.name, email: user.email }, JWT_SECRET as string, { expiresIn: '7d' })
-
-          return new GetLoginUserUseCaseResponse(token, user, null)
-
+          }       
         } catch (error: any) {
           console.log(TAG_INTERNAL_SERVER_ERROR, error)
           return new GetLoginUserUseCaseResponse(null, null, new InternalServerError(error.message))
@@ -197,57 +202,174 @@ class StartSessionUserWhatsAppController {
     const validate = new StartSessionWhatsAppValidate()
     const repository = new StartSessionWhatsAppRepository()
 
-    const usecase = async (req: StartSessionUserWthatsAppRequest): Promise<StartSessionUserWthatsAppResponse> => {
-      try {
-        const error = await validate.startSessionWhatsAppValidate(req)
     
+    let responseSent = false;
+    const usecase = async (req: StartSessionUserWthatsAppRequest): Promise<StartSessionUserWthatsAppResponse> => {
+
+      try {
+        const error = await validate.startSessionWhatsAppValidate(req);
+
         if (!error) {
-          const conectWhastApp = await repository.startSessionWhatsAppRepository(req.userID)
-          console.log("conectWhastApp", conectWhastApp)
+          const conectWhastApp = await repository.startSessionWhatsAppRepository(req.userID);
+
+          console.log("conectWhastApp", conectWhastApp);
           if (conectWhastApp) {
             const options: CreateOptions = {
-              session: session,
-              catchQR: (base64Qrimg, asciiQR, attempts, urlCode) => {
-                console.log('Number of attempts to read the qrcode: ', attempts)
-                console.log('Terminal qrcode: ', asciiQR)
-                console.log('base64 image string qrcode: ', base64Qrimg)
-                console.log('urlCode (data-ref): ', urlCode)
+              session,
+              catchQR: (base64Qrimg) => {
+                if (!responseSent) {
+                  responseSent = true
+                  console.log("QR gerado", base64Qrimg)
+                  res.json({ qrCode: base64Qrimg })
+                }
               },
               browserArgs: ['--no-sandbox']
             }
 
-            await create(options)
-            console.log("WhatsApp conectado", options)
-            return new StartSessionUserWthatsAppResponse(true, session, null)
-
+            const client = await create(options)
+            session.set(session, client)
+            console.log("WhatsApp conectado", session.set)
+            return new StartSessionUserWthatsAppResponse(true, session, userID, null)
           }
         }
-    
-        return new StartSessionUserWthatsAppResponse(false, null, new PreconditionError(error || "Erro ao iniciar sessão"))
-    
+
+        return new StartSessionUserWthatsAppResponse(false, null, userID, new PreconditionError(error || "Erro ao iniciar sessão"));
+
       } catch (error: any) {
-        console.log(TAG_INTERNAL_SERVER_ERROR, error)
-        return new StartSessionUserWthatsAppResponse(false, null, new InternalServerError(error.message))
+        console.log(TAG_INTERNAL_SERVER_ERROR, error);
+        return new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
       }
-    }
+    };
 
     try {
-      const ucRes = await usecase(ucReq)
-      if (ucRes.error) {
-        res.status(400).json({ error: ucRes.error })
-      } else {
-        new SuccessResponse().success(res, ucRes.session)
+      const ucRes = await usecase(ucReq);
+      if (!responseSent) {
+        if (ucRes.error) {
+          res.status(400).json({ error: ucRes.error });
+        } else {
+          new SuccessResponse().success(res, ucRes.session);
+        }
       }
-    }catch (error: any) {
-      console.log(TAG_INTERNAL_SERVER_ERROR, error)
-      new StartSessionUserWthatsAppResponse(false, null, new InternalServerError(error.message))
+    } catch (error: any) {
+      console.log(TAG_INTERNAL_SERVER_ERROR, error);
+      if (!responseSent) {
+        new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
+      }
     }
   }
 
 }
 
+class CheckSessionUserWhatsAppController {
+  async checkSessionUserWhatsApp(req: Request, res: Response): Promise<void> {
+    const {userID, session } = req.body
+    const ucReq = new StartSessionUserWthatsAppRequest(userID, session)
+    const validate = new StartSessionWhatsAppValidate()
+    const repository = new StartSessionWhatsAppRepository()
+
+    
+    let responseSent = false;
+    const usecase = async (req: StartSessionUserWthatsAppRequest): Promise<StartSessionUserWthatsAppResponse> => {
+
+      try {
+        const error = await validate.startSessionWhatsAppValidate(req);
+
+        if (!error) {
+          const conectWhastApp = await repository.startSessionWhatsAppRepository(req.userID);
+
+          console.log("conectWhastApp", conectWhastApp);
+          if (conectWhastApp) {
+            const options: CreateOptions = {
+              session: WhatsApoStatusEnum.CONNECTED,
+              catchQR: (base64Qrimg) => {
+                if (!responseSent) {
+                  responseSent = true;
+                  console.log("QR gerado", base64Qrimg);
+                  res.json({ qrCode: base64Qrimg });
+                }
+              },
+              browserArgs: ['--no-sandbox']
+            };
+
+            await create(options);
+            console.log("WhatsApp conectado", options);
+            return new StartSessionUserWthatsAppResponse(true, session, userID, null);
+          }
+        }
+
+        return new StartSessionUserWthatsAppResponse(false, null, userID, new PreconditionError(error || "Erro ao iniciar sessão"));
+
+      } catch (error: any) {
+        console.log(TAG_INTERNAL_SERVER_ERROR, error);
+        return new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
+      }
+    };
+
+    try {
+      const ucRes = await usecase(ucReq);
+      if (!responseSent) {
+        if (ucRes.error) {
+          res.status(400).json({ error: ucRes.error });
+        } else {
+          new SuccessResponse().success(res, ucRes.session);
+        }
+      }
+    } catch (error: any) {
+      console.log(TAG_INTERNAL_SERVER_ERROR, error);
+      if (!responseSent) {
+        new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
+      }
+    }
+  }
+
+}
+
+class CheckEmailExistsUserController {
+  async checkEmailExistsUser(req: Request, res: Response): Promise<void> {
+    const { email } = req.body
+
+    const ucReq = new CheckEmailExistsUserUseCaseRequest(email)
+    const validate = new CheckEmailExistsUserValidate()
+    const repository = new GetLoginUserRepository()
+
+    const usecase = async (req: CheckEmailExistsUserUseCaseRequest): Promise<CheckEmailExistsUserUseCaseResponse> => {
+        try {
+          const error = await validate.checkEmailExistsValidate(req)
+
+          if (!error) {
+            const user = await repository.getLoginUser(email)
+
+            if (req.email !== user?.email) {
+              return new CheckEmailExistsUserUseCaseResponse(new PreconditionError("Email não encontrado"))
+            }
+
+            return new CheckEmailExistsUserUseCaseResponse(null)
+          } else {
+            console.log(TAG_PRE_CONDITION_ERROR, error)
+            return new CheckEmailExistsUserUseCaseResponse(new PreconditionError("Email já cadastrado"))
+          }       
+        } catch (error: any) {
+          console.log(TAG_INTERNAL_SERVER_ERROR, error)
+          return new CheckEmailExistsUserUseCaseResponse(new InternalServerError(error.message))
+        }
+    }
+    
+    try {
+      const ucRes = await usecase(ucReq)
+      if (ucRes.error) {
+        res.status(400).json({ error: ucRes.error })
+      } else {
+        new SuccessResponse().success(res, ucRes)
+      }
+    }catch(erro: any) {
+      console.log(TAG_INTERNAL_SERVER_ERROR, erro)
+      new CheckEmailExistsUserUseCaseResponse(new InternalServerError(erro.message))
+    }
+  }
+}
+
 
 export {
   CreateUserRegisterController, LoginUserController, StartSessionUserWhatsAppController, 
-  UpdateUserController, DeleteUserController
+  UpdateUserController, DeleteUserController, CheckEmailExistsUserController, CheckSessionUserWhatsAppController
 }

@@ -35,7 +35,13 @@ class StartSessionWhatsAppRepository {
   }
 }
 
+class CheckEmailExistsUserRepository {
+  async checkEmailExists(email: string): Promise<UserAssociation | null> {
+      return await getLoginUser(email)
+  }
+}
+
 export {
   CreateUserRepository, GetLoginUserRepository , UpdateUserRepository, DeleteUserRepository,
-  StartSessionWhatsAppRepository
+  StartSessionWhatsAppRepository, CheckEmailExistsUserRepository
 }
