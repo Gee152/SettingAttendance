@@ -53,7 +53,7 @@ class CreateMessageController {
 
 class GetMessageController {
   async getMessage(req: Request, res: Response): Promise<void> {
-    const { messageID } = req.params
+    const { messageID } = req.body
     const ucReq = new GetMessageUseCaseRequest(messageID)
 
     const validate = new GetMessageValidate()

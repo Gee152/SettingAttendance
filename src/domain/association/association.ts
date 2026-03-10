@@ -73,6 +73,8 @@ class UserAssociation {
   public name: string
   public email: string
   public passwordHash: string
+  public role: string
+  public isActive: boolean
   public createdAt: Date
   public updatedAt: Date
 
@@ -81,6 +83,8 @@ class UserAssociation {
     name: string,
     email: string,
     passwordHash: string,
+    role: string,
+    isActive: boolean,
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -88,6 +92,8 @@ class UserAssociation {
     this.name = name
     this.email = email
     this.passwordHash = passwordHash
+    this.role = role
+    this.isActive = isActive
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }

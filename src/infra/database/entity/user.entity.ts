@@ -15,6 +15,12 @@ export class UserEntity {
   @Column({ name: 'passwordHash' })
     public passwordHash!: string
 
+  @Column({ default: 'User' })
+    public role!: string
+
+  @Column({ default: false })
+    public isActive!: boolean
+
   @CreateDateColumn()
     public createdAt!: Date
 
@@ -26,6 +32,8 @@ export class UserEntity {
     name: string,
     email: string,
     passwordHash: string,
+    role: string,
+    isActive: boolean,
     createdAt: Date,
     updatedAt: Date,
   ) {
@@ -33,6 +41,8 @@ export class UserEntity {
     this.name = name
     this.email = email
     this.passwordHash = passwordHash
+    this.role = role || 'User'
+    this.isActive = isActive || false
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }

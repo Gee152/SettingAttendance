@@ -7,6 +7,8 @@ function toUserEntity(m: UserEntity): UserAssociation {
     m.name,
     m.email,
     m.passwordHash,
+    m.role,
+    m.isActive,
     m.createdAt,
     m.updatedAt
   )
@@ -18,6 +20,8 @@ function toUserModel(e: UserAssociation): UserEntity {
     e.name,
     e.email,
     e.passwordHash,
+    e.role,
+    e.isActive,
     e.createdAt,
     e.updatedAt
   )

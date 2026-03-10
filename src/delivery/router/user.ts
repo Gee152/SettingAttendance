@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { CheckEmailExistsUserController, CreateUserRegisterController, DeleteUserController, LoginUserController, StartSessionUserWhatsAppController, UpdateUserController } from '../controller/user'
+import { CheckEmailExistsUserController, CreateUserRegisterController, DeleteUserController, LoginUserController, UpdateUserController } from '../controller/user'
 
 class userRouter {
   private router: Router
@@ -11,7 +11,6 @@ class userRouter {
     this.router.post('/login', new LoginUserController().loginUser)
     this.router.post('/updateUser', new UpdateUserController().updateUser)
     this.router.post('/deleteUser', new DeleteUserController().deleteUser)
-    this.router.post('/startSessionUserWhatsApp', new StartSessionUserWhatsAppController().startSessionUserWhatsApp)
     this.router.post('/checkEmailExists', new CheckEmailExistsUserController().checkEmailExistsUser)
 
   }

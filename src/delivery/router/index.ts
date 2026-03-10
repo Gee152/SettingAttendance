@@ -2,6 +2,7 @@ import { campaignRouter } from "./campaign"
 import { contactRouter } from "./contact"
 import { MessageRouter } from "./message"
 import { userRouter } from "./user"
+import { proposalRouter } from "./proposal"
 import express from 'express'
 
 class Router {
@@ -10,6 +11,7 @@ class Router {
 		app.use(new MessageRouter().getRouter())
 		app.use(new contactRouter().getRouter())
 		app.use(new campaignRouter().getRouter())
+		app.use(new proposalRouter().getRouter())
 	}
 }
 

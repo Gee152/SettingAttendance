@@ -1,17 +1,14 @@
-import { CreateUserRepository, DeleteUserRepository, GetLoginUserRepository, StartSessionWhatsAppRepository, UpdateUserRepository } from "../../domain/repository/user"
+import { CreateUserRepository, DeleteUserRepository, GetLoginUserRepository, UpdateUserRepository } from "../../domain/repository/user"
 import { CheckEmailExistsUserUseCaseRequest, CheckEmailExistsUserUseCaseResponse, CreateUserUseCaseRequest, CreateUserUseCaseResponse, 
-DeleteUserUseCaseRequest, DeleteUserUseCaseResponse, GetLoginUserUseCaseRequest, GetLoginUserUseCaseResponse, StartSessionUserWthatsAppRequest, 
-StartSessionUserWthatsAppResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse } from "../../domain/ucio/user"
-import { CheckEmailExistsUserValidate, CreateUserValidate, DeleteUserValidate, GetLoginUserValidate, StartSessionWhatsAppValidate, UpdateUserValidate } from "../../domain/validate/user"
+DeleteUserUseCaseRequest, DeleteUserUseCaseResponse, GetLoginUserUseCaseRequest, GetLoginUserUseCaseResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse } from "../../domain/ucio/user"
+import { CheckEmailExistsUserValidate, CreateUserValidate, DeleteUserValidate, GetLoginUserValidate, UpdateUserValidate } from "../../domain/validate/user"
 import { SuccessResponse } from "../response/response"
 import { Request, Response } from 'express'
 import { InternalServerError, PreconditionError, TAG_INTERNAL_SERVER_ERROR, TAG_PRE_CONDITION_ERROR } from "../../domain/association/error"
-import { create, CreateOptions } from 'venom-bot'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { WhatsApoStatusEnum } from "../../domain/utils/enum"
 
 dotenv.config()
 
@@ -36,6 +33,8 @@ class CreateUserRegisterController {
                     name: req.name,
                     email: req.email,
                     passwordHash: hashedPassword,
+                    role: 'User', //construir enum depois
+                    isActive: false,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -195,134 +194,7 @@ class DeleteUserController {
   }
 }
 
-class StartSessionUserWhatsAppController {
-  async startSessionUserWhatsApp(req: Request, res: Response): Promise<void> {
-    const {userID, session } = req.body
-    const ucReq = new StartSessionUserWthatsAppRequest(userID, session)
-    const validate = new StartSessionWhatsAppValidate()
-    const repository = new StartSessionWhatsAppRepository()
 
-    
-    let responseSent = false;
-    const usecase = async (req: StartSessionUserWthatsAppRequest): Promise<StartSessionUserWthatsAppResponse> => {
-
-      try {
-        const error = await validate.startSessionWhatsAppValidate(req);
-
-        if (!error) {
-          const conectWhastApp = await repository.startSessionWhatsAppRepository(req.userID);
-
-          console.log("conectWhastApp", conectWhastApp);
-          if (conectWhastApp) {
-            const options: CreateOptions = {
-              session,
-              catchQR: (base64Qrimg) => {
-                if (!responseSent) {
-                  responseSent = true
-                  console.log("QR gerado", base64Qrimg)
-                  res.json({ qrCode: base64Qrimg })
-                }
-              },
-              browserArgs: ['--no-sandbox']
-            }
-
-            const client = await create(options)
-            session.set(session, client)
-            console.log("WhatsApp conectado", session.set)
-            return new StartSessionUserWthatsAppResponse(true, session, userID, null)
-          }
-        }
-
-        return new StartSessionUserWthatsAppResponse(false, null, userID, new PreconditionError(error || "Erro ao iniciar sessão"));
-
-      } catch (error: any) {
-        console.log(TAG_INTERNAL_SERVER_ERROR, error);
-        return new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
-      }
-    };
-
-    try {
-      const ucRes = await usecase(ucReq);
-      if (!responseSent) {
-        if (ucRes.error) {
-          res.status(400).json({ error: ucRes.error });
-        } else {
-          new SuccessResponse().success(res, ucRes.session);
-        }
-      }
-    } catch (error: any) {
-      console.log(TAG_INTERNAL_SERVER_ERROR, error);
-      if (!responseSent) {
-        new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
-      }
-    }
-  }
-
-}
-
-class CheckSessionUserWhatsAppController {
-  async checkSessionUserWhatsApp(req: Request, res: Response): Promise<void> {
-    const {userID, session } = req.body
-    const ucReq = new StartSessionUserWthatsAppRequest(userID, session)
-    const validate = new StartSessionWhatsAppValidate()
-    const repository = new StartSessionWhatsAppRepository()
-
-    
-    let responseSent = false;
-    const usecase = async (req: StartSessionUserWthatsAppRequest): Promise<StartSessionUserWthatsAppResponse> => {
-
-      try {
-        const error = await validate.startSessionWhatsAppValidate(req);
-
-        if (!error) {
-          const conectWhastApp = await repository.startSessionWhatsAppRepository(req.userID);
-
-          console.log("conectWhastApp", conectWhastApp);
-          if (conectWhastApp) {
-            const options: CreateOptions = {
-              session: WhatsApoStatusEnum.CONNECTED,
-              catchQR: (base64Qrimg) => {
-                if (!responseSent) {
-                  responseSent = true;
-                  console.log("QR gerado", base64Qrimg);
-                  res.json({ qrCode: base64Qrimg });
-                }
-              },
-              browserArgs: ['--no-sandbox']
-            };
-
-            await create(options);
-            console.log("WhatsApp conectado", options);
-            return new StartSessionUserWthatsAppResponse(true, session, userID, null);
-          }
-        }
-
-        return new StartSessionUserWthatsAppResponse(false, null, userID, new PreconditionError(error || "Erro ao iniciar sessão"));
-
-      } catch (error: any) {
-        console.log(TAG_INTERNAL_SERVER_ERROR, error);
-        return new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
-      }
-    };
-
-    try {
-      const ucRes = await usecase(ucReq);
-      if (!responseSent) {
-        if (ucRes.error) {
-          res.status(400).json({ error: ucRes.error });
-        } else {
-          new SuccessResponse().success(res, ucRes.session);
-        }
-      }
-    } catch (error: any) {
-      console.log(TAG_INTERNAL_SERVER_ERROR, error);
-      if (!responseSent) {
-        new StartSessionUserWthatsAppResponse(false, null, userID, new InternalServerError(error.message));
-      }
-    }
-  }
-
-}
 
 class CheckEmailExistsUserController {
   async checkEmailExistsUser(req: Request, res: Response): Promise<void> {
@@ -370,6 +242,6 @@ class CheckEmailExistsUserController {
 
 
 export {
-  CreateUserRegisterController, LoginUserController, StartSessionUserWhatsAppController, 
-  UpdateUserController, DeleteUserController, CheckEmailExistsUserController, CheckSessionUserWhatsAppController
+  CreateUserRegisterController, LoginUserController, 
+  UpdateUserController, DeleteUserController, CheckEmailExistsUserController
 }
