@@ -11,9 +11,9 @@ async function createProposal(proposal: ProposalAssociation): Promise<ProposalAs
     return toProposalAssociation(proposalTransformeDB)
 }
 
-async function getProposal(ID: number): Promise<ProposalAssociation | null> {
+async function getProposal(proposalID: string): Promise<ProposalAssociation | null> {
     const repository = AppDataSource.getRepository(ProposalModel)
-    const proposalFromDb = await repository.findOneBy({ ID, isActive: true })
+    const proposalFromDb = await repository.findOneBy({ proposalID, isActive: true })
 
     return proposalFromDb ? toProposalAssociation(proposalFromDb) : null
 }
@@ -22,17 +22,17 @@ async function updateProposal(proposal: ProposalAssociation): Promise<ProposalAs
     const repository = AppDataSource.getRepository(ProposalModel)
     const proposalModel = toProposalModel(proposal)
     
-    if (proposalModel.ID) {
-        await repository.update(proposalModel.ID, proposalModel)
-        const result = await repository.findOneBy({ ID: proposalModel.ID })
+    if (proposalModel.proposalID) {
+        await repository.update(proposalModel.proposalID, proposalModel)
+        const result = await repository.findOneBy({ proposalID: proposalModel.proposalID })
         return result ? toProposalAssociation(result) : null
     }
     return null
 }
 
-async function deleteProposal(ID: number): Promise<void> {
+async function deleteProposal(proposalID: string): Promise<void> {
     const repository = AppDataSource.getRepository(ProposalModel)
-    const proposalFromDb = await repository.findOneBy({ ID })
+    const proposalFromDb = await repository.findOneBy({ proposalID })
 
     if (proposalFromDb) {
         proposalFromDb.isActive = false

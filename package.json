@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "ts-node src/index.ts",
     "build": "vite build",
     "start": "nodemon src/index.ts",
     "migration:generate": "ts-node --esm ./node_modules/typeorm/cli.js migration:generate -d ./typeorm.config.ts",

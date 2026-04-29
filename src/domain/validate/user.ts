@@ -1,44 +1,44 @@
 import { CheckEmailExistsUserUseCaseRequest, CreateUserUseCaseRequest, DeleteUserUseCaseRequest, GetLoginUserUseCaseRequest, StartSessionUserWthatsAppRequest, UpdateUserUseCaseRequest } from "../ucio/user"
 import { checkEmpty } from "./common"
 
-class CreateUserValidate  {
-  async createUserValidate(req: CreateUserUseCaseRequest): Promise<string> {
-      if (checkEmpty(req.name)) {
-          return "O nome não pode ser vazio."
-      }
+class CreateUserValidate {
+    async createUserValidate(req: CreateUserUseCaseRequest): Promise<string> {
+        if (checkEmpty(req.name)) {
+            return "O nome não pode ser vazio."
+        }
 
-      if (checkEmpty(req.email)) {
-          return "O e-mail não pode ser vazio."
-      }
+        if (checkEmpty(req.email)) {
+            return "O e-mail não pode ser vazio."
+        }
 
-      if (checkEmpty(req.passwordHash)) {
-          return "A senha não pode ser vazia."
-      }
+        if (checkEmpty(req.passwordHash)) {
+            return "A senha não pode ser vazia."
+        }
         return ""
     }
 }
 
-class GetLoginUserValidate  {
+class GetLoginUserValidate {
     async getLoginUserValidate(req: GetLoginUserUseCaseRequest): Promise<string> {
         if (checkEmpty(req.email)) {
             return "O e-mail não pode ser vazio."
         }
-  
+
         if (checkEmpty(req.passwordHash)) {
             return "A senha não pode ser vazia."
         }
-          return ""
+        return ""
     }
 }
 
-class CheckEmailExistsUserValidate  {
+class CheckEmailExistsUserValidate {
     async checkEmailExistsValidate(req: CheckEmailExistsUserUseCaseRequest): Promise<string | null> {
-        console.log('validate',req.email)
+        console.log('validate', req.email)
         if (checkEmpty(req.email)) {
             return "O e-mail não pode ser vazio."
         }
-  
-          return null
+
+        return null
     }
 }
 
@@ -60,7 +60,7 @@ class UpdateUserValidate {
 }
 
 class DeleteUserValidate {
-    async deleteUser(req:DeleteUserUseCaseRequest): Promise<string | null> {
+    async deleteUser(req: DeleteUserUseCaseRequest): Promise<string | null> {
         if (checkEmpty(req.userID)) {
             return 'O ID não pode ficar vazio.'
         }
@@ -74,10 +74,10 @@ class StartSessionWhatsAppValidate {
             return 'O ID não pode ficar vazio.'
         }
         return null
-  }
+    }
 }
 
 export {
-    CreateUserValidate, GetLoginUserValidate, UpdateUserValidate , DeleteUserValidate,
+    CreateUserValidate, GetLoginUserValidate, UpdateUserValidate, DeleteUserValidate,
     StartSessionWhatsAppValidate, CheckEmailExistsUserValidate
 }

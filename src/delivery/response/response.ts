@@ -2,6 +2,9 @@ import { Response } from 'express'
 
 class SuccessResponse {
     success(res: Response, body: any): any {
+        if (body && body.error) {
+            return res.status(400).json({ error: body.error })
+        }
         return res.status(200).json(body)
     }
 }

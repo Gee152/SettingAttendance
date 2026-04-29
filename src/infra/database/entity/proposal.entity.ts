@@ -1,100 +1,108 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Dependent, ProposalStatus } from "../../../domain/association/proposal"
 
-@Entity({schema: 'public', name: 'proposal'})
-class ProposalModel {
-    @PrimaryGeneratedColumn('increment')
-        public ID: number | null
-    
+@Entity({ schema: 'public', name: 'proposal' })
+export class ProposalModel {
+    @PrimaryGeneratedColumn('uuid', { name: 'proposal_id' })
+    public proposalID!: string | null
+
     @Column({ name: 'address', type: 'varchar', nullable: false, length: '255' })
-        public address: string
+    public address: string
 
     @Column({ name: 'cod_operator', type: 'varchar', nullable: false, length: '100' })
-        public codOperator: string
+    public codOperator: string
 
     @Column({ name: 'holder', type: 'varchar', nullable: false, length: '255' })
-        public holder: string
-    
-    @Column({ name: 'dependents', type: 'varchar', nullable: true, length: '255' })
-        public dependents: string | null
-    
+    public holder: string
+
+    @Column({ name: 'dependents', type: 'boolean', nullable: false, default: false })
+    public dependents: boolean
+
+    @Column({ name: 'dependents_list', type: 'jsonb', nullable: true })
+    public dependentsList: Dependent[] | null
+
     @Column({ name: 'date_of_birth', type: 'date', nullable: false })
-        public dateOfBirth: Date
+    public dateOfBirth: Date
 
     @Column({ name: 'cpf', type: 'varchar', nullable: false, length: '15' })
-        public cpf: string
+    public cpf: string
 
     @Column({ name: 'identity', type: 'varchar', nullable: true, length: '20' })
-        public identity: string | null
+    public identity: string | null
 
     @Column({ name: 'proposal_number', type: 'varchar', nullable: false, length: '100' })
-        public proposalNumber: string
+    public proposalNumber: string
 
     @Column({ name: 'whatsapp', type: 'varchar', nullable: false, length: '15' })
-        public whatsapp: string
+    public whatsapp: string
 
     @Column({ name: 'zip_code', type: 'varchar', nullable: false, length: '15' })
-        public zipCode: string
+    public zipCode: string
 
     @Column({ name: 'number_resident', type: 'varchar', nullable: false, length: '1000' })
-        public numberResident: string
-    
+    public numberResident: string
+
     @Column({ name: 'uf', type: 'varchar', nullable: false, length: '2' })
-        public UF: string
+    public UF: string
 
     @Column({ name: 'contact', type: 'varchar', nullable: false, length: '255' })
-        public contact: string
+    public contact: string
 
     @Column({ name: 'email', type: 'varchar', nullable: false, length: '255' })
-        public email: string
+    public email: string
 
     @Column({ name: 'contract_readjustment', type: 'date', nullable: false })
-        public contractReadjustment: Date
+    public contractReadjustment: Date
 
     @Column({ name: 'contract_implementation', type: 'date', nullable: false })
-        public contractImplementation: Date
+    public contractImplementation: Date
 
     @Column({ name: 'bill_expiration', type: 'date', nullable: false })
-        public billExpiration: Date
+    public billExpiration: Date
 
     @Column({ name: 'contract_price', type: 'decimal', nullable: false, precision: 10, scale: 2 })
-        public contractPrice: number
+    public contractPrice: number
 
     @Column({ name: 'lead', type: 'varchar', nullable: false, length: '255' })
-        public lead: string
+    public lead: string
 
     @Column({ name: 'plan', type: 'varchar', nullable: false, length: '255' })
-        public plan: string
+    public plan: string
 
     @Column({ name: 'type_of_contract', type: 'varchar', nullable: false, length: '100' })
-        public typeOfContract: string
+    public typeOfContract: string
 
     @Column({ name: 'office', type: 'varchar', nullable: false, length: '255' })
-        public office: string
+    public office: string
 
     @Column({ name: 'broker', type: 'varchar', nullable: false, length: '255' })
-        public broker: string
+    public broker: string
 
     @Column({ name: 'adm_fee', type: 'decimal', nullable: false, precision: 10, scale: 2 })
-        public admFee: number
+    public admFee: number
 
     @Column({ name: 'supervisor', type: 'varchar', nullable: false, length: '255' })
-        public supervisor: string
+    public supervisor: string
+
+    @Column({ name: 'status', type: 'enum', enum: ProposalStatus, default: ProposalStatus.PENDENTE })
+    public status: ProposalStatus
 
     @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-        public createdAt!: Date
+    public createdAt!: Date
 
     @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-        public updatedAt!: Date
+    public updatedAt!: Date
 
     @Column({ name: 'is_active', type: 'boolean', default: true })
-        public isActive: boolean
+    public isActive: boolean
 
     constructor(
-        ID: number | null,
+        proposalID: string | null,
         address: string,
         codOperator: string,
         holder: string,
-        dependents: string | null,
+        dependents: boolean,
+        dependentsList: Dependent[] | null,
         dateOfBirth: Date,
         cpf: string,
         identity: string | null,
@@ -116,13 +124,15 @@ class ProposalModel {
         broker: string,
         admFee: number,
         supervisor: string,
+        status: ProposalStatus,
         isActive: boolean
     ) {
-        this.ID = ID
+        this.proposalID = proposalID
         this.address = address
         this.codOperator = codOperator
         this.holder = holder
         this.dependents = dependents
+        this.dependentsList = dependentsList
         this.dateOfBirth = dateOfBirth
         this.cpf = cpf
         this.identity = identity
@@ -144,10 +154,7 @@ class ProposalModel {
         this.broker = broker
         this.admFee = admFee
         this.supervisor = supervisor
+        this.status = status
         this.isActive = isActive
     }
-}
-
-export {
-    ProposalModel
 }

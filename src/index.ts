@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { CmdRest } from "./delivery/cmd/cmd"
 
 class Cmd {
@@ -29,10 +30,12 @@ class Cmd {
       }
     
       initDev(): void {
-        process.env['DATABASE_APP_POSTGRESQL_URI'] = 'postgres://postgres:postgres@localhost:5432/messaging_app'
+        const { DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env
+        process.env['DATABASE_APP_POSTGRESQL_URI'] = `postgres://${DB_USERNAME || 'postgres'}:${DB_PASSWORD || 'postgres'}@${DB_HOST || 'localhost'}:${DB_PORT || '5432'}/${DB_DATABASE || 'messaging_app'}`
             
         new CmdRest().server()
       }
+
 
       /* async init(): Promise<void> {
         if (await this.checkEnvVar()) {

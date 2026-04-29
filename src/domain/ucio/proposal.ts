@@ -1,11 +1,12 @@
-import { ProposalAssociation } from "../association/proposal"
+import { ProposalAssociation, Dependent, ProposalStatus } from "../association/proposal"
 import { ErrorEntity } from "../association/error"
 
 class CreateProposalUseCaseRequest {
     public address: string
     public codOperator: string
     public holder: string
-    public dependents: string | null
+    public dependents: boolean
+    public dependentsList: Dependent[] | null
     public dateOfBirth: Date
     public cpf: string
     public identity: string | null
@@ -27,18 +28,20 @@ class CreateProposalUseCaseRequest {
     public broker: string
     public admFee: number
     public supervisor: string
+    public status: ProposalStatus
   
     constructor(
-      address: string, codOperator: string, holder: string, dependents: string | null, dateOfBirth: Date,
+      address: string, codOperator: string, holder: string, dependents: boolean, dependentsList: Dependent[] | null, dateOfBirth: Date,
       cpf: string, identity: string | null, proposalNumber: string, whatsapp: string, zipCode: string,
       numberResident: string, UF: string, contact: string, email: string, contractReadjustment: Date,
       contractImplementation: Date, billExpiration: Date, contractPrice: number, lead: string,
-      plan: string, typeOfContract: string, office: string, broker: string, admFee: number, supervisor: string
+      plan: string, typeOfContract: string, office: string, broker: string, admFee: number, supervisor: string, status: ProposalStatus
     ) {
       this.address = address
       this.codOperator = codOperator
       this.holder = holder
       this.dependents = dependents
+      this.dependentsList = dependentsList
       this.dateOfBirth = dateOfBirth
       this.cpf = cpf
       this.identity = identity
@@ -60,6 +63,7 @@ class CreateProposalUseCaseRequest {
       this.broker = broker
       this.admFee = admFee
       this.supervisor = supervisor
+      this.status = status
     }
 }
 
@@ -74,10 +78,10 @@ class CreateProposalUseCaseResponse {
 }
 
 class GetProposalUseCaseRequest {
-    public ID: number
+    public proposalID: string
 
-    constructor(ID: number) {
-        this.ID = ID
+    constructor(proposalID: string) {
+        this.proposalID = proposalID
     }
 }
 
@@ -92,11 +96,12 @@ class GetProposalUseCaseResponse {
 }
 
 class UpdateProposalUseCaseRequest {
-    public ID: number
+    public proposalID: string
     public address: string
     public codOperator: string
     public holder: string
-    public dependents: string | null
+    public dependents: boolean
+    public dependentsList: Dependent[] | null
     public dateOfBirth: Date
     public cpf: string
     public identity: string | null
@@ -118,19 +123,21 @@ class UpdateProposalUseCaseRequest {
     public broker: string
     public admFee: number
     public supervisor: string
+    public status: ProposalStatus
 
     constructor(
-        ID: number, address: string, codOperator: string, holder: string, dependents: string | null, dateOfBirth: Date,
+        proposalID: string, address: string, codOperator: string, holder: string, dependents: boolean, dependentsList: Dependent[] | null, dateOfBirth: Date,
         cpf: string, identity: string | null, proposalNumber: string, whatsapp: string, zipCode: string,
         numberResident: string, UF: string, contact: string, email: string, contractReadjustment: Date,
         contractImplementation: Date, billExpiration: Date, contractPrice: number, lead: string,
-        plan: string, typeOfContract: string, office: string, broker: string, admFee: number, supervisor: string
+        plan: string, typeOfContract: string, office: string, broker: string, admFee: number, supervisor: string, status: ProposalStatus
     ) {
-        this.ID = ID
+        this.proposalID = proposalID
         this.address = address
         this.codOperator = codOperator
         this.holder = holder
         this.dependents = dependents
+        this.dependentsList = dependentsList
         this.dateOfBirth = dateOfBirth
         this.cpf = cpf
         this.identity = identity
@@ -152,6 +159,7 @@ class UpdateProposalUseCaseRequest {
         this.broker = broker
         this.admFee = admFee
         this.supervisor = supervisor
+        this.status = status
     }
 }
 
@@ -166,10 +174,10 @@ class UpdateProposalUseCaseResponse {
 }
 
 class DeleteProposalUseCaseRequest {
-    public ID: number
+    public proposalID: string
 
-    constructor(ID: number) {
-        this.ID = ID
+    constructor(proposalID: string) {
+        this.proposalID = proposalID
     }
 }
 

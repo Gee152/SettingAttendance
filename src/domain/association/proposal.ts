@@ -1,9 +1,20 @@
+import { Dependent } from "./dependent"
+
+export enum ProposalStatus {
+  PENDENTE = 'PENDENTE',
+  EM_ANALISE = 'EM_ANALISE',
+  APROVADO = 'APROVADO',
+  REJEITADO = 'REJEITADO',
+  CANCELADO = 'CANCELADO',
+}
+
 class ProposalAssociation {
-  public ID: number | null 
+  public proposalID: string | null 
   public address: string 
   public codOperator: string 
   public holder: string 
-  public dependents: string | null 
+  public dependents: boolean 
+  public dependentsList: Dependent[] | null
   public dateOfBirth: Date 
   public cpf: string 
   public identity: string | null 
@@ -25,15 +36,17 @@ class ProposalAssociation {
   public broker: string 
   public admFee: number 
   public supervisor: string 
+  public status: ProposalStatus
   public createdAt: Date 
   public updatedAt: Date
 
   constructor(
-      ID: number | null,
+      proposalID: string | null,
       address: string,
       codOperator: string,
       holder: string,
-      dependents: string | null,
+      dependents: boolean,
+      dependentsList: Dependent[] | null,
       dateOfBirth: Date,
       cpf: string,
       identity: string | null,
@@ -55,14 +68,16 @@ class ProposalAssociation {
       broker: string,
       admFee: number,
       supervisor: string,
+      status: ProposalStatus,
       createdAt: Date,
       updatedAt: Date
   ) {
-      this.ID = ID 
+      this.proposalID = proposalID 
       this.address = address 
       this.codOperator = codOperator 
       this.holder = holder 
       this.dependents = dependents 
+      this.dependentsList = dependentsList
       this.dateOfBirth = dateOfBirth 
       this.cpf = cpf 
       this.identity = identity 
@@ -84,9 +99,10 @@ class ProposalAssociation {
       this.broker = broker 
       this.admFee = admFee 
       this.supervisor = supervisor 
+      this.status = status
       this.createdAt = createdAt 
       this.updatedAt = updatedAt 
   }
 }
 
-export { ProposalAssociation }
+export { ProposalAssociation, Dependent }

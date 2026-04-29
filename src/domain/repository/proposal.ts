@@ -8,8 +8,8 @@ class CreateProposalRepository {
 }
 
 class GetProposalRepository {
-    async getProposal(ID: number): Promise<ProposalAssociation | null> {
-        return await getProposal(ID)
+    async getProposal(proposalID: string): Promise<ProposalAssociation | null> {
+        return await getProposal(proposalID)
     }
 }
 
@@ -20,8 +20,8 @@ class UpdateProposalRepository {
 }
 
 class DeleteProposalRepository {
-    async deleteProposal(ID: number): Promise<void> {
-        return await deleteProposal(ID)
+    async deleteProposal(proposalID: string): Promise<void> {
+        return await deleteProposal(proposalID)
     }
 }
 

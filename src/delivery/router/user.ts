@@ -12,7 +12,6 @@ class userRouter {
     this.router.post('/updateUser', new UpdateUserController().updateUser)
     this.router.post('/deleteUser', new DeleteUserController().deleteUser)
     this.router.post('/checkEmailExists', new CheckEmailExistsUserController().checkEmailExistsUser)
-
   }
 
   getRouter(): Router {
