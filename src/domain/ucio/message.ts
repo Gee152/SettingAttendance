@@ -25,7 +25,7 @@ class GetMessageUseCaseRequest {
   }
 }
 
-class GetMessageUseCaseResponse { //Deixar só o response com error
+class GetMessageUseCaseResponse {
   public messages: MessageAssociation | null
   public error: ErrorEntity | null
 
@@ -69,6 +69,18 @@ class DeleteMessageUseCaseResponse {
   }
 }
 
+class ListMessageUseCaseRequest {}
+
+class ListMessageUseCaseResponse {
+  public messages: MessageAssociation[] | null
+  public error: ErrorEntity | null
+
+  constructor(messages: MessageAssociation[] | null, error: ErrorEntity | null) {
+    this.messages = messages
+    this.error = error
+  }
+}
+
 export {
   CreateMessageUseCaseRequest,
   CreateMessageUseCaseResponse,
@@ -77,5 +89,7 @@ export {
   UpdateMessageUseCaseRequest,
   UpdateMessageUseCaseResponse,
   DeleteMessageUseCaseRequest,
-  DeleteMessageUseCaseResponse
+  DeleteMessageUseCaseResponse,
+  ListMessageUseCaseRequest,
+  ListMessageUseCaseResponse
 }

@@ -1,4 +1,4 @@
-import { CheckEmailExistsUserUseCaseRequest, CreateUserUseCaseRequest, DeleteUserUseCaseRequest, GetLoginUserUseCaseRequest, StartSessionUserWthatsAppRequest, UpdateUserUseCaseRequest } from "../ucio/user"
+import { CheckEmailExistsUserUseCaseRequest, CreateUserUseCaseRequest, DeleteUserUseCaseRequest, GetLoginUserUseCaseRequest, GetUserUseCaseRequest, StartSessionUserWthatsAppRequest, UpdateUserUseCaseRequest } from "../ucio/user"
 import { checkEmpty } from "./common"
 
 class CreateUserValidate {
@@ -77,7 +77,16 @@ class StartSessionWhatsAppValidate {
     }
 }
 
+class GetUserValidate {
+    async getUserValidate(req: GetUserUseCaseRequest): Promise<string | null> {
+        if (checkEmpty(req.userID)) {
+            return 'O ID não pode ficar vazio.'
+        }
+        return null
+    }
+}
+
 export {
     CreateUserValidate, GetLoginUserValidate, UpdateUserValidate, DeleteUserValidate,
-    StartSessionWhatsAppValidate, CheckEmailExistsUserValidate
+    StartSessionWhatsAppValidate, CheckEmailExistsUserValidate, GetUserValidate
 }

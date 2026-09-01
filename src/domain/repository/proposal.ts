@@ -1,4 +1,4 @@
-import { createProposal, getProposal, updateProposal, deleteProposal, listProposal } from "../../infra/database/proposal"
+import { createProposal, getProposal, updateProposal, deleteProposal, listProposal, countProposal } from "../../infra/database/proposal"
 import { ProposalAssociation } from "../association/proposal"
 
 class CreateProposalRepository {
@@ -26,8 +26,12 @@ class DeleteProposalRepository {
 }
 
 class ListProposalRepository {
-    async listProposal(): Promise<ProposalAssociation[]> {
-        return await listProposal()
+    async listProposal(page?: number, limit?: number, filters?: { status?: string; holder?: string; cpf?: string }): Promise<ProposalAssociation[]> {
+        return await listProposal(page, limit, filters)
+    }
+
+    async countProposal(filters?: { status?: string; holder?: string; cpf?: string }): Promise<number> {
+        return await countProposal(filters)
     }
 }
 

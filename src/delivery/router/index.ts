@@ -3,6 +3,8 @@ import { contactRouter } from "./contact"
 import { MessageRouter } from "./message"
 import { userRouter } from "./user"
 import { proposalRouter } from "./proposal"
+import { kanbanStepRouter } from "./kanbanStep"
+import { stepProspectoRouter } from "./stepProspecto"
 import express from 'express'
 
 class Router {
@@ -12,6 +14,8 @@ class Router {
 		app.use(new contactRouter().getRouter())
 		app.use(new campaignRouter().getRouter())
 		app.use(new proposalRouter().getRouter())
+		app.use(new kanbanStepRouter().getRouter())
+		app.use(new stepProspectoRouter().getRouter())
 	}
 }
 

@@ -53,7 +53,20 @@ async function getUserWhastsAppSession(userID: string): Promise<UserAssociation 
   return userFromDb ? toUserEntity(userFromDb) : null
 }
 
+async function getUser(userID: string): Promise<UserAssociation | null> {
+  const repository = AppDataSource.getRepository(UserEntity)
+  const userFromDb = await repository.findOneBy({ userID })
+
+  return userFromDb ? toUserEntity(userFromDb) : null
+}
+
+async function listUser(): Promise<UserAssociation[]> {
+  const repository = AppDataSource.getRepository(UserEntity)
+  const usersFromDb = await repository.find()
+  return usersFromDb.map(toUserEntity)
+}
+
 export {
   createUser, getLoginUser, updateUser , updateLoginUser, 
-  deleteUser, getUserWhastsAppSession
+  deleteUser, getUserWhastsAppSession, getUser, listUser
 }

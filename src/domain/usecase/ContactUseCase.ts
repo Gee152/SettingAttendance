@@ -1,6 +1,6 @@
-import { CreateContactUseCaseRequest, CreateContactUseCaseResponse, GetContactUseCaseRequest, GetContactUseCaseResponse, UpdateContactUseCaseRequest, UpdateContactUseCaseResponse, DeleteContactUseCaseRequest, DeleteContactUseCaseResponse } from "../ucio/contact"
+import { CreateContactUseCaseRequest, CreateContactUseCaseResponse, GetContactUseCaseRequest, GetContactUseCaseResponse, UpdateContactUseCaseRequest, UpdateContactUseCaseResponse, DeleteContactUseCaseRequest, DeleteContactUseCaseResponse, ListContactUseCaseRequest, ListContactUseCaseResponse } from "../ucio/contact"
 import { CreateContactValidate, GetContactValidate, UpdateContactValidate, DeleteContactValidate } from "../validate/contact"
-import { CreateContactRepository, GetContactRepository, UpdateContactRepository, DeleteContactRepository } from "../repository/contact"
+import { CreateContactRepository, GetContactRepository, UpdateContactRepository, DeleteContactRepository, ListContactRepository } from "../repository/contact"
 import { PreconditionError, InternalServerError, TAG_PRE_CONDITION_ERROR, TAG_INTERNAL_SERVER_ERROR } from "../association/error"
 import { v4 as uuidv4 } from 'uuid'
 
@@ -108,6 +108,22 @@ export class DeleteContactUseCase {
         } catch (error: any) {
             console.log(TAG_INTERNAL_SERVER_ERROR, error)
             return new DeleteContactUseCaseResponse(new InternalServerError(error.message))
+        }
+    }
+}
+
+export class ListContactUseCase {
+    constructor(
+        private repository: ListContactRepository = new ListContactRepository()
+    ) {}
+
+    async execute(req: ListContactUseCaseRequest): Promise<ListContactUseCaseResponse> {
+        try {
+            const contacts = await this.repository.listContact()
+            return new ListContactUseCaseResponse(contacts, null)
+        } catch (error: any) {
+            console.log(TAG_INTERNAL_SERVER_ERROR, error)
+            return new ListContactUseCaseResponse(null, new InternalServerError(error.message))
         }
     }
 }

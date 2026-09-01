@@ -9,13 +9,13 @@ export class UserEntity {
   @Column()
     public name!: string
 
-  @Column({ name: 'email' })
+  @Column({ name: 'email', unique: true })
     public email!: string
 
   @Column({ name: 'passwordHash' })
     public passwordHash!: string
 
-  @Column({ default: 'User' })
+  @Column({ default: '0' })
     public role!: string
 
   @Column({ default: false })
@@ -41,7 +41,7 @@ export class UserEntity {
     this.name = name
     this.email = email
     this.passwordHash = passwordHash
-    this.role = role || 'User'
+    this.role = role || '0'
     this.isActive = isActive || false
     this.createdAt = createdAt
     this.updatedAt = updatedAt

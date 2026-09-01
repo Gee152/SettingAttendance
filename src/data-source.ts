@@ -4,6 +4,9 @@ import { ContactEntity } from './infra/database/entity/contact.entity'
 import { CampaignEntity } from './infra/database/entity/campaign.entity'
 import { MessageEntity } from './infra/database/entity/message.entity'
 import { ProposalModel } from './infra/database/entity/proposal.entity'
+import { PermissionEntity } from './infra/database/entity/permission.entity'
+import { KanbanStepModel } from './infra/database/entity/kanbanStep.entity'
+import { StepProspectoEntity } from './infra/database/entity/stepProspecto.entity'
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -15,9 +18,9 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'messaging_app',
-  entities: [UserEntity, ContactEntity, MessageEntity, CampaignEntity, ProposalModel],
+  entities: [UserEntity, ContactEntity, MessageEntity, CampaignEntity, ProposalModel, PermissionEntity, KanbanStepModel, StepProspectoEntity],
   migrations: ['src/migration/*.ts'],
-  synchronize: false, // Only for development true!
+  synchronize: true, // Only for development true!
   dropSchema: false,
   logging: false,
 })

@@ -38,9 +38,48 @@ async function deleteCampaign(campaignID: string): Promise<CampaignAssociation> 
   return toCampaignEntity(CampaignFromDb as CampaignEntity)
 }
 
+async function listCampaign(page?: number, limit?: number, filters?: { status?: string; userName?: string }): Promise<CampaignAssociation[]> {
+  const repository = AppDataSource.getRepository(CampaignEntity)
+  
+  const queryBuilder = repository.createQueryBuilder('campaign')
+  
+  if (filters?.status) {
+    queryBuilder.andWhere('campaign.status = :status', { status: filters.status })
+  }
+  if (filters?.userName) {
+    queryBuilder.andWhere('campaign.userName LIKE :userName', { userName: `%${filters.userName}%` })
+  }
+  
+  queryBuilder.orderBy('campaign.createdAt', 'DESC')
+  
+  if (page && limit) {
+    queryBuilder.skip((page - 1) * limit).take(limit)
+  }
+  
+  const campaignsFromDb = await queryBuilder.getMany()
+  return campaignsFromDb.map(campaign => toCampaignEntity(campaign))
+}
+
+async function countCampaign(filters?: { status?: string; userName?: string }): Promise<number> {
+  const repository = AppDataSource.getRepository(CampaignEntity)
+  
+  const queryBuilder = repository.createQueryBuilder('campaign')
+  
+  if (filters?.status) {
+    queryBuilder.andWhere('campaign.status = :status', { status: filters.status })
+  }
+  if (filters?.userName) {
+    queryBuilder.andWhere('campaign.userName LIKE :userName', { userName: `%${filters.userName}%` })
+  }
+  
+  return await queryBuilder.getCount()
+}
+
 export {
   createCampaign, 
   getCampaign, 
   updateCampaign, 
-  deleteCampaign	
+  deleteCampaign,
+  listCampaign,
+  countCampaign
 }

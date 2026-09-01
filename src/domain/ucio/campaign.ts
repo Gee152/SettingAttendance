@@ -81,6 +81,36 @@ class DeleteCampaignUseCaseResponse {
   }
 }
 
+class ListCampaignUseCaseRequest {
+  public page?: number
+  public limit?: number
+  public status?: string
+  public userName?: string
+
+  constructor(page?: number, limit?: number, status?: string, userName?: string) {
+    this.page = page
+    this.limit = limit
+    this.status = status
+    this.userName = userName
+  }
+}
+
+class ListCampaignUseCaseResponse {
+  public campaigns: CampaignAssociation[] | null
+  public total: number
+  public page: number
+  public limit: number
+  public error: ErrorEntity | null
+
+  constructor(campaigns: CampaignAssociation[] | null, total: number, page: number, limit: number, error: ErrorEntity | null) {
+    this.campaigns = campaigns
+    this.total = total
+    this.page = page
+    this.limit = limit
+    this.error = error
+  }
+}
+
 export {
   CreateCampaignUseCaseRequest,
   CreateCampaignUseCaseResponse,
@@ -89,5 +119,7 @@ export {
   UpdateCampaignUseCaseRequest,
   UpdateCampaignUseCaseResponse,
   DeleteCampaignUseCaseRequest,
-  DeleteCampaignUseCaseResponse
+  DeleteCampaignUseCaseResponse,
+  ListCampaignUseCaseRequest,
+  ListCampaignUseCaseResponse
 }

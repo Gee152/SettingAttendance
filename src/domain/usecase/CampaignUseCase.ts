@@ -1,6 +1,6 @@
-import { CreateCampaignUseCaseRequest, CreateCampaignUseCaseResponse, GetCampaignUseCaseRequest, GetCampaignUseCaseResponse, UpdateCampaignUseCaseRequest, UpdateCampaignUseCaseResponse, DeleteCampaignUseCaseRequest, DeleteCampaignUseCaseResponse } from "../ucio/campaign"
+import { CreateCampaignUseCaseRequest, CreateCampaignUseCaseResponse, GetCampaignUseCaseRequest, GetCampaignUseCaseResponse, UpdateCampaignUseCaseRequest, UpdateCampaignUseCaseResponse, DeleteCampaignUseCaseRequest, DeleteCampaignUseCaseResponse, ListCampaignUseCaseRequest, ListCampaignUseCaseResponse } from "../ucio/campaign"
 import { CreateCampaignValidate, GetCampaignValidate, UpdateCampaignValidate, DeleteCampaignValidate } from "../validate/campaign"
-import { CreateCampaignRepository, GetCampaignRepository, UpdateCampaignRepository, DeleteCampaignRepository } from "../repository/campaign"
+import { CreateCampaignRepository, GetCampaignRepository, UpdateCampaignRepository, DeleteCampaignRepository, ListCampaignRepository } from "../repository/campaign"
 import { PreconditionError, InternalServerError, TAG_PRE_CONDITION_ERROR, TAG_INTERNAL_SERVER_ERROR } from "../association/error"
 import { v4 as uuidv4 } from 'uuid'
 
@@ -109,6 +109,33 @@ export class DeleteCampaignUseCase {
         } catch (error: any) {
             console.log(TAG_INTERNAL_SERVER_ERROR, error)
             return new DeleteCampaignUseCaseResponse(new InternalServerError(error.message))
+        }
+    }
+}
+
+export class ListCampaignUseCase {
+    constructor(
+        private repository: ListCampaignRepository = new ListCampaignRepository()
+    ) {}
+
+    async execute(req: ListCampaignUseCaseRequest): Promise<ListCampaignUseCaseResponse> {
+        try {
+            const page = req.page || 1
+            const limit = req.limit || 10
+            const filters = {
+                status: req.status,
+                userName: req.userName
+            }
+
+            const [campaigns, total] = await Promise.all([
+                this.repository.listCampaign(page, limit, filters),
+                this.repository.countCampaign(filters)
+            ])
+
+            return new ListCampaignUseCaseResponse(campaigns, total, page, limit, null)
+        } catch (error: any) {
+            console.log(TAG_INTERNAL_SERVER_ERROR, error)
+            return new ListCampaignUseCaseResponse(null, 0, 1, 10, new InternalServerError(error.message))
         }
     }
 }

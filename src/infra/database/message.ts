@@ -40,7 +40,12 @@ async function deleteMessage(messageID: string): Promise<MessageAssociation> {
   return toMessageEntity(messegeFromDb as MessageEntity)
 }
 
+async function listMessage(): Promise<MessageAssociation[]> {
+  const repository = AppDataSource.getRepository(MessageEntity)
+  const messagesFromDb = await repository.find()
+  return messagesFromDb.map(toMessageEntity)
+}
 
 export {
-  createMessage, getMessage, updateMessage, deleteMessage
+  createMessage, getMessage, updateMessage, deleteMessage, listMessage
 }

@@ -189,14 +189,34 @@ class DeleteProposalUseCaseResponse {
     }
 }
 
-class ListProposalUseCaseRequest {}
+class ListProposalUseCaseRequest {
+    public page?: number
+    public limit?: number
+    public status?: string
+    public holder?: string
+    public cpf?: string
+
+    constructor(page?: number, limit?: number, status?: string, holder?: string, cpf?: string) {
+        this.page = page
+        this.limit = limit
+        this.status = status
+        this.holder = holder
+        this.cpf = cpf
+    }
+}
 
 class ListProposalUseCaseResponse {
     public proposals: ProposalAssociation[] | null
+    public total: number
+    public page: number
+    public limit: number
     public error: ErrorEntity | null
 
-    constructor(proposals: ProposalAssociation[] | null, error: ErrorEntity | null) {
+    constructor(proposals: ProposalAssociation[] | null, total: number, page: number, limit: number, error: ErrorEntity | null) {
         this.proposals = proposals
+        this.total = total
+        this.page = page
+        this.limit = limit
         this.error = error
     }
 }

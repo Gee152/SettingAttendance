@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { CreateCampaignController, GetCampaignController, UpdateCampaignController, DeleteCampaignController } from "../controller/campaign"
+import { ExportCampaignController } from "../controller/exportCampaign"
 
 class campaignRouter {
   private router: Router
@@ -11,6 +12,8 @@ class campaignRouter {
     this.router.post('/getCampaign', new GetCampaignController().getCampaign)
     this.router.post('/updateCampaign', new UpdateCampaignController().updateCampaign)
     this.router.post('/deleteCampaign', new DeleteCampaignController().deleteCampaign)
+    this.router.post('/exportCampaignCSV', new ExportCampaignController().exportCSV)
+    this.router.post('/exportCampaignPDF', new ExportCampaignController().exportPDF)
   }
 
   getRouter(): Router {

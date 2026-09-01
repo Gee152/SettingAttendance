@@ -183,11 +183,23 @@ export class ListProposalUseCase {
 
     async execute(req: ListProposalUseCaseRequest): Promise<ListProposalUseCaseResponse> {
         try {
-            const proposals = await this.repository.listProposal()
-            return new ListProposalUseCaseResponse(proposals, null)
+            const page = req.page || 1
+            const limit = req.limit || 10
+            const filters = {
+                status: req.status,
+                holder: req.holder,
+                cpf: req.cpf
+            }
+
+            const [proposals, total] = await Promise.all([
+                this.repository.listProposal(page, limit, filters),
+                this.repository.countProposal(filters)
+            ])
+
+            return new ListProposalUseCaseResponse(proposals, total, page, limit, null)
         } catch (error: any) {
             console.log(TAG_INTERNAL_SERVER_ERROR, error)
-            return new ListProposalUseCaseResponse(null, new InternalServerError(error.message))
+            return new ListProposalUseCaseResponse(null, 0, 1, 10, new InternalServerError(error.message))
         }
     }
 }

@@ -1,4 +1,4 @@
-import { createMessage, deleteMessage, getMessage, updateMessage } from "../../infra/database/message"
+import { createMessage, deleteMessage, getMessage, updateMessage, listMessage } from "../../infra/database/message"
 import { MessageAssociation } from "../association/association"
 
 class CreateMessageRepository {
@@ -29,6 +29,12 @@ class DeleteMessageRepository {
   }
 }
 
+class ListMessageRepository {
+  async listMessage(): Promise<MessageAssociation[]> {
+    return await listMessage()
+  }
+}
+
 export {
-  CreateMessageRepository, GetMessageRepository , UpdateMessageRepository, DeleteMessageRepository
+  CreateMessageRepository, GetMessageRepository , UpdateMessageRepository, DeleteMessageRepository, ListMessageRepository
 }

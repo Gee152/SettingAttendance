@@ -38,6 +38,12 @@ async function deleteContact(contactID: string): Promise<ContactAssociation> {
   return toContactEntity(contactFromDb as ContactEntity)
 }
 
+async function listContact(): Promise<ContactAssociation[]> {
+  const repository = AppDataSource.getRepository(ContactEntity)
+  const contactsFromDb = await repository.find()
+  return contactsFromDb.map(toContactEntity)
+}
+
 export {
-  createContact, getContact, updateContact, deleteContact
+  createContact, getContact, updateContact, deleteContact, listContact
 }

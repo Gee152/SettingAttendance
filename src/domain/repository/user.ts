@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getLoginUser, getUserWhastsAppSession, updateLoginUser, updateUser } from "../../infra/database/user"
+import { createUser, deleteUser, getLoginUser, getUser, listUser, getUserWhastsAppSession, updateLoginUser, updateUser } from "../../infra/database/user"
 import { UserAssociation } from "../association/association"
 
 class CreateUserRepository {
@@ -10,6 +10,12 @@ class CreateUserRepository {
 class GetLoginUserRepository {
   async getLoginUser(email: string): Promise<UserAssociation | null> {
       return await getLoginUser(email)
+  }
+}
+
+class GetUserRepository {
+  async getUser(userID: string): Promise<UserAssociation | null> {
+      return await getUser(userID)
   }
 }
 
@@ -41,7 +47,13 @@ class CheckEmailExistsUserRepository {
   }
 }
 
+class ListUserRepository {
+  async listUser(): Promise<UserAssociation[]> {
+    return await listUser()
+  }
+}
+
 export {
-  CreateUserRepository, GetLoginUserRepository , UpdateUserRepository, DeleteUserRepository,
-  StartSessionWhatsAppRepository, CheckEmailExistsUserRepository
+  CreateUserRepository, GetLoginUserRepository , GetUserRepository, UpdateUserRepository, DeleteUserRepository,
+  StartSessionWhatsAppRepository, CheckEmailExistsUserRepository, ListUserRepository
 }

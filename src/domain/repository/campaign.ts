@@ -1,4 +1,4 @@
-import { createCampaign, getCampaign, updateCampaign, deleteCampaign } from "../../infra/database/campaign"
+import { createCampaign, getCampaign, updateCampaign, deleteCampaign, listCampaign, countCampaign } from "../../infra/database/campaign"
 import { CampaignAssociation } from "../association/association"
 
 class CreateCampaignRepository {
@@ -29,9 +29,20 @@ class DeleteCampaignRepository {
   }
 }
 
+class ListCampaignRepository {
+  async listCampaign(page?: number, limit?: number, filters?: { status?: string; userName?: string }): Promise<CampaignAssociation[]> {
+    return await listCampaign(page, limit, filters)
+  }
+
+  async countCampaign(filters?: { status?: string; userName?: string }): Promise<number> {
+    return await countCampaign(filters)
+  }
+}
+
 export {
   CreateCampaignRepository,
   GetCampaignRepository,
   UpdateCampaignRepository,
-  DeleteCampaignRepository
+  DeleteCampaignRepository,
+  ListCampaignRepository
 }

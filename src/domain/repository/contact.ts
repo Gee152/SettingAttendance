@@ -1,5 +1,5 @@
 
-import { createContact, getContact, updateContact, deleteContact } from "../../infra/database/contact"
+import { createContact, getContact, updateContact, deleteContact, listContact } from "../../infra/database/contact"
 import { ContactAssociation } from "../association/association"
 
 class CreateContactRepository {
@@ -30,6 +30,12 @@ class DeleteContactRepository {
   }
 }
 
+class ListContactRepository {
+  async listContact(): Promise<ContactAssociation[]> {
+    return await listContact()
+  }
+}
+
 export {
-  CreateContactRepository, GetContactRepository, UpdateContactRepository, DeleteContactRepository
+  CreateContactRepository, GetContactRepository, UpdateContactRepository, DeleteContactRepository, ListContactRepository
 }

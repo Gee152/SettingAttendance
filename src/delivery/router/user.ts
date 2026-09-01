@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { CheckEmailExistsUserController, CreateUserRegisterController, DeleteUserController, LoginUserController, UpdateUserController } from '../controller/user'
+import { GetPermissionsController, UpdatePermissionsController, ListUsersController } from '../controller/permission'
 
 class userRouter {
   private router: Router
@@ -12,6 +13,9 @@ class userRouter {
     this.router.post('/updateUser', new UpdateUserController().updateUser)
     this.router.post('/deleteUser', new DeleteUserController().deleteUser)
     this.router.post('/checkEmailExists', new CheckEmailExistsUserController().checkEmailExistsUser)
+    this.router.post('/getPermissions', new GetPermissionsController().getPermissions)
+    this.router.post('/updatePermissions', new UpdatePermissionsController().updatePermissions)
+    this.router.post('/listUsers', new ListUsersController().listUsers)
   }
 
   getRouter(): Router {

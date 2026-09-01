@@ -3,6 +3,7 @@ import {
   CreateProposalController, GetProposalController, UpdateProposalController,
   DeleteProposalController, ListProposalController
 } from "../controller/proposal"
+//import { ExportProposalController } from "../controller/exportProposal"
 
 class proposalRouter {
 	private _router = express.Router()
@@ -13,6 +14,8 @@ class proposalRouter {
 		this._router.post('/listProposal', new ListProposalController().listProposal)
 		this._router.post('/updatedProposal', new UpdateProposalController().updateProposal)
 		this._router.post('/deleteProposal', new DeleteProposalController().deleteProposal)
+		//this._router.post('/exportProposalCSV', new ExportProposalController().exportCSV)
+		//this._router.post('/exportProposalPDF', new ExportProposalController().exportPDF)
 	}
 
 	public getRouter(): express.Router {

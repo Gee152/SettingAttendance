@@ -122,9 +122,28 @@ class CheckEmailExistsUserUseCaseResponse {
   }
 }
 
+class GetUserUseCaseRequest {
+  public userID: string
+
+  constructor(userID: string) {
+    this.userID = userID
+  }
+}
+
+class GetUserUseCaseResponse {
+  public user: UserAssociation | null
+  public error: ErrorEntity | null
+
+  constructor(user: UserAssociation | null, error: ErrorEntity | null) {
+    this.user = user
+    this.error = error
+  }
+}
+
 export {
   CreateUserUseCaseRequest, CreateUserUseCaseResponse, GetLoginUserUseCaseRequest, 
   GetLoginUserUseCaseResponse, UpdateUserUseCaseRequest, UpdateUserUseCaseResponse,
   DeleteUserUseCaseRequest, DeleteUserUseCaseResponse ,StartSessionUserWthatsAppRequest,
-  StartSessionUserWthatsAppResponse, CheckEmailExistsUserUseCaseRequest, CheckEmailExistsUserUseCaseResponse
+  StartSessionUserWthatsAppResponse, CheckEmailExistsUserUseCaseRequest, CheckEmailExistsUserUseCaseResponse,
+  GetUserUseCaseRequest, GetUserUseCaseResponse
 }

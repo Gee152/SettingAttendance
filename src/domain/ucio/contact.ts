@@ -81,7 +81,20 @@ class DeleteContactUseCaseResponse {
   }
 }
 
+class ListContactUseCaseRequest {}
+
+class ListContactUseCaseResponse {
+  public contacts: ContactAssociation[] | null
+  public error: ErrorEntity | null
+
+  constructor(contacts: ContactAssociation[] | null, error: ErrorEntity | null) {
+    this.contacts = contacts
+    this.error = error
+  }
+}
+
 export {
   CreateContactUseCaseRequest, CreateContactUseCaseResponse, GetContactUseCaseResponse, GetContactUseCaseRequest,
-  UpdateContactUseCaseRequest, UpdateContactUseCaseResponse, DeleteContactUseCaseRequest, DeleteContactUseCaseResponse
+  UpdateContactUseCaseRequest, UpdateContactUseCaseResponse, DeleteContactUseCaseRequest, DeleteContactUseCaseResponse,
+  ListContactUseCaseRequest, ListContactUseCaseResponse
 }
